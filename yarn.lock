@@ -190,9 +190,9 @@
     solc-typed-ast "18.2.4"
     yargs "17.7.2"
 
-"@defi-wonderland/xerc20@github:defi-wonderland/xerc20#refactor/use-solady":
+"@defi-wonderland/xerc20@github:defi-wonderland/xerc20#5878325b19f9431cf423b67ebfd9f2301028d794":
   version "1.0.1"
-  resolved "https://codeload.github.com/defi-wonderland/xerc20/tar.gz/471ad711a0d1d32ba244c9990fcbb9f20c183951"
+  resolved "https://codeload.github.com/defi-wonderland/xerc20/tar.gz/5878325b19f9431cf423b67ebfd9f2301028d794"
 
 "@noble/curves@1.3.0", "@noble/curves@~1.3.0":
   version "1.3.0"

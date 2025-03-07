@@ -15,16 +15,16 @@ import {IERC165, IERC7802} from 'interfaces/external/IERC7802.sol';
 ///         unified cross-chain fungibility across any bridge.
 contract CrosschainERC20 is XERC20, IERC7802 {
   /// @notice Constructs the CrosschainERC20 contract.
-  /// @param _name    Name of the token.
-  /// @param _symbol  Symbol of the token.
-  /// @param _decimals Decimals of the token.
-  /// @param _factory Address of the factory contract.
+  /// @param __name    Name of the token.
+  /// @param __symbol  Symbol of the token.
+  /// @param __decimals Decimals of the token.
+  /// @param __factory Address of the factory contract.
   constructor(
-    string memory _name,
-    string memory _symbol,
-    uint8 _decimals,
-    address _factory
-  ) XERC20(_name, _symbol, _decimals, _factory) {}
+    string memory __name,
+    string memory __symbol,
+    uint8 __decimals,
+    address __factory
+  ) XERC20(__name, __symbol, __decimals, __factory) {}
 
   /// @notice Allows a bridge to mint tokens.
   /// @param _to     Address to mint tokens to.

@@ -14,6 +14,7 @@ import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20} from 'interfaces/ICrosschainERC20.sol';
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
 import {IERC7802Adapter} from 'interfaces/IERC7802Adapter.sol';
+import {IERC7802} from 'interfaces/external/IERC7802.sol';
 
 /// @title CrosschainERC20_e2e_Base
 /// @notice Base contract for end-to-end testing of the CrosschainERC20 paths.
@@ -85,6 +86,18 @@ abstract contract CrosschainERC20_e2e_Base is Test {
     return address(ERC7802Adapter) != address(0) ? address(ERC7802Adapter) : address(crosschainERC20);
   }
 
+  /// @notice Helper function to determine the correct address to approve for ERC7802 operations
+  /// @return The address to approve (either bridge or adapter)
+  function _getERC7802ApprovalTarget() internal view returns (address) {
+    return address(ERC7802Adapter) != address(0) ? address(ERC7802Adapter) : erc7802Bridge;
+  }
+
+  /// @notice Helper function to determine the correct contract to call for ERC7802 operations
+  /// @return The contract to call (either adapter or token)
+  function _getERC7802CallTarget() internal view returns (address) {
+    return address(ERC7802Adapter) != address(0) ? address(ERC7802Adapter) : address(crosschainERC20);
+  }
+
   /// @notice Mints using ERC7281 interface.
   function test_mintERC7281_succeeds() public {
     // Get balance before mint
@@ -129,7 +142,7 @@ abstract contract CrosschainERC20_e2e_Base is Test {
 
     // Mint tokens
     vm.prank(erc7802Bridge);
-    crosschainERC20.crosschainMint(alice, MINT_LIMIT);
+    IERC7802(_getERC7802CallTarget()).crosschainMint(alice, MINT_LIMIT);
 
     // Get balance after mint
     uint256 balanceAfter = crosschainERC20.balanceOf(alice);
@@ -145,11 +158,11 @@ abstract contract CrosschainERC20_e2e_Base is Test {
   function test_burnERC7802_succeeds() public virtual {
     // Approve the bridge to burn
     vm.prank(alice);
-    crosschainERC20.approve(erc7802Bridge, BURN_LIMIT);
+    crosschainERC20.approve(_getERC7802ApprovalTarget(), BURN_LIMIT);
 
     // Burn tokens
     vm.prank(erc7802Bridge);
-    crosschainERC20.crosschainBurn(alice, BURN_LIMIT);
+    IERC7802(_getERC7802CallTarget()).crosschainBurn(alice, BURN_LIMIT);
 
     // Check the balance has decreased by the burned amount
     uint256 balance = crosschainERC20.balanceOf(alice);

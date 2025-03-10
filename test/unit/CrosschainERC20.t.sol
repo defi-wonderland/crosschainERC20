@@ -94,12 +94,15 @@ contract CrosschainERC20Test is Test {
     // Ensure `_tokenOwner` is not the zero address
     vm.assume(_tokenOwner != ZERO_ADDRESS);
 
+    // Ensure `_tokenOwner` and `_tokenBridge` are not the same address
+    vm.assume(_tokenOwner != _tokenBridge);
+
     // Set the limits for the Token Bridge
     vm.prank(owner);
     crosschainERC20.setLimits(_tokenBridge, _amount, _amount);
 
     // Expect the `burn` function to revert when the allowance is insufficient
-    vm.expectRevert(ERC20.InsufficientBalance.selector);
+    vm.expectRevert(ERC20.InsufficientAllowance.selector);
 
     // Burn the tokens without approval
     vm.prank(_tokenBridge);

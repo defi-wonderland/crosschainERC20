@@ -9,6 +9,7 @@ interface ICrosschainERC20Factory {
   function deployCrosschainERC20(
     string memory _name,
     string memory _symbol,
+    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
@@ -18,6 +19,7 @@ interface ICrosschainERC20Factory {
   function deployCrosschainERC20WithLockbox(
     string memory _name,
     string memory _symbol,
+    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,

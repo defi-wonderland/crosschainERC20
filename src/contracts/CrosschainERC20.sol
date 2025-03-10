@@ -39,6 +39,10 @@ contract CrosschainERC20 is XERC20, IERC7802 {
   /// @param _from   Address to burn tokens from.
   /// @param _amount Amount of tokens to burn.
   function crosschainBurn(address _from, uint256 _amount) external {
+    if (msg.sender != _from) {
+      _spendAllowance(_from, msg.sender, _amount);
+    }
+
     _burnWithCaller(msg.sender, _from, _amount);
 
     emit CrosschainBurn(_from, _amount, msg.sender);

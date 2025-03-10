@@ -25,6 +25,7 @@ contract CrosschainERC20Factory_Test is Test {
 
   string name = 'Test';
   string symbol = 'TST';
+  uint8 constant DECIMALS = 18;
 
   /// @notice Test setup.
   function setUp() public {
@@ -75,7 +76,7 @@ contract CrosschainERC20Factory_Test is Test {
 
     // Deploy the CrosschainERC20
     vm.expectRevert(CrosschainERC20Factory.InvalidLength.selector);
-    factory.deployCrosschainERC20(name, symbol, _minterLimits, _burnerLimits, _bridges, owner);
+    factory.deployCrosschainERC20(name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, owner);
   }
 
   /// @notice Test that the deployCrosschainERC20 function succeeds.
@@ -92,7 +93,7 @@ contract CrosschainERC20Factory_Test is Test {
 
     // Deploy the CrosschainERC20
     address _crosschainERC20 =
-      factory.deployCrosschainERC20(name, symbol, _minterLimits, _burnerLimits, _bridges, owner);
+      factory.deployCrosschainERC20(name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, owner);
 
     // Assert the CrosschainERC20 is deployed
     assertGt(_crosschainERC20.code.length, 0);
@@ -100,6 +101,7 @@ contract CrosschainERC20Factory_Test is Test {
     // Assert the token name and symbol are correct
     assertEq(ICrosschainERC20(_crosschainERC20).name(), name);
     assertEq(ICrosschainERC20(_crosschainERC20).symbol(), symbol);
+    assertEq(ICrosschainERC20(_crosschainERC20).decimals(), DECIMALS);
   }
 
   /// @notice Test that the deployCrosschainERC20 function sets the limits correctly.
@@ -116,7 +118,7 @@ contract CrosschainERC20Factory_Test is Test {
 
     // Deploy the CrosschainERC20
     address _crosschainERC20 =
-      factory.deployCrosschainERC20(name, symbol, _minterLimits, _burnerLimits, _bridges, owner);
+      factory.deployCrosschainERC20(name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, owner);
 
     // Assert the limits are set correctly
     for (uint256 _i; _i < _bridges.length; ++_i) {
@@ -135,7 +137,7 @@ contract CrosschainERC20Factory_Test is Test {
 
     // Deploy the CrosschainERC20
     address _crosschainERC20 =
-      factory.deployCrosschainERC20(name, symbol, _minterLimits, _burnerLimits, _bridges, owner);
+      factory.deployCrosschainERC20(name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, owner);
 
     // Assert the owner was correctly set
     assertEq(ICrosschainERC20(_crosschainERC20).owner(), owner);
@@ -157,8 +159,9 @@ contract CrosschainERC20Factory_Test is Test {
     address _baseToken = address(makeAddr('ERC20'));
 
     // Deploy the CrosschainERC20 with Lockbox
-    (_crosschainERC20, _crosschainERC20Lockbox) =
-      factory.deployCrosschainERC20WithLockbox(name, symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, owner);
+    (_crosschainERC20, _crosschainERC20Lockbox) = factory.deployCrosschainERC20WithLockbox(
+      name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, owner
+    );
 
     // Assert the CrosschainERC20 is deployed
     assertGt(_crosschainERC20.code.length, 0);
@@ -174,6 +177,9 @@ contract CrosschainERC20Factory_Test is Test {
 
     // Assert the IS_NATIVE flag is set to false
     assertEq(XERC20Lockbox(payable(_crosschainERC20Lockbox)).IS_NATIVE(), false);
+
+    // Assert decimals are set correctly
+    assertEq(ICrosschainERC20(_crosschainERC20).decimals(), DECIMALS);
   }
 
   /// @notice Test that the deployCrosschainERC20WithLockbox function sets the lockbox correctly.
@@ -188,11 +194,15 @@ contract CrosschainERC20Factory_Test is Test {
     address _baseToken = address(makeAddr('ERC20'));
 
     // Deploy the CrosschainERC20 with Lockbox
-    (_crosschainERC20, _crosschainERC20Lockbox) =
-      factory.deployCrosschainERC20WithLockbox(name, symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, owner);
+    (_crosschainERC20, _crosschainERC20Lockbox) = factory.deployCrosschainERC20WithLockbox(
+      name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, owner
+    );
 
     // Assert the CrosschainERC20Lockbox is set
     assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).XERC20()), _crosschainERC20);
+
+    // Assert decimals are set correctly
+    assertEq(ICrosschainERC20(_crosschainERC20).decimals(), DECIMALS);
   }
 
   /// @notice Test that the deployERC7802Adapter function succeeds.

@@ -16,6 +16,7 @@ contract CrosschainERC20Factory {
   /// @notice Deploys a new CrosschainERC20 contract and returns the address
   /// @param _name The name of the token
   /// @param _symbol The symbol of the token
+  /// @param _decimals The decimals of the token
   /// @param _minterLimits The minter limits for the token
   /// @param _burnerLimits The burner limits for the token
   /// @param _bridges The bridges for the token
@@ -23,17 +24,19 @@ contract CrosschainERC20Factory {
   function deployCrosschainERC20(
     string memory _name,
     string memory _symbol,
+    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
     address _owner
   ) external returns (address crosschainERC20_) {
-    crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _minterLimits, _burnerLimits, _bridges, _owner);
+    crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
   }
 
   /// @notice Deploys a new CrosschainERC20Lockbox and CrosschainERC20
   /// @param _name The name of the token
   /// @param _symbol The symbol of the token
+  /// @param _decimals The decimals of the token
   /// @param _minterLimits The minter limits for the token
   /// @param _burnerLimits The burner limits for the token
   /// @param _bridges The bridges for the token
@@ -43,13 +46,14 @@ contract CrosschainERC20Factory {
   function deployCrosschainERC20WithLockbox(
     string memory _name,
     string memory _symbol,
+    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
     address _baseToken,
     address _owner
   ) external returns (address crosschainERC20_, address crosschainERC20Lockbox_) {
-    crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _minterLimits, _burnerLimits, _bridges, _owner);
+    crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
     crosschainERC20Lockbox_ = _deployLockbox(crosschainERC20_, _baseToken);
   }
 
@@ -64,6 +68,7 @@ contract CrosschainERC20Factory {
   /// @notice Deploys a new CrosschainERC20 contract and returns the address
   /// @param _name The name of the token
   /// @param _symbol The symbol of the token
+  /// @param _decimals The decimals of the token
   /// @param _minterLimits The minter limits for the token
   /// @param _burnerLimits The burner limits for the token
   /// @param _bridges The bridges for the token
@@ -71,6 +76,7 @@ contract CrosschainERC20Factory {
   function _deployCrosschainERC20(
     string memory _name,
     string memory _symbol,
+    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
@@ -78,11 +84,11 @@ contract CrosschainERC20Factory {
   ) internal returns (address crosschainERC20_) {
     uint256 _bridgesLength = _bridges.length;
 
-    if (_minterLimits.length & _bridgesLength != _bridgesLength) revert InvalidLength();
+    if (_minterLimits.length != _bridgesLength || _burnerLimits.length != _bridgesLength) revert InvalidLength();
 
     bytes32 salt = keccak256(abi.encodePacked(_name, _symbol, msg.sender));
     bytes memory creation = type(CrosschainERC20).creationCode;
-    bytes memory bytecode = abi.encodePacked(creation, abi.encode(_name, _symbol, address(this)));
+    bytes memory bytecode = abi.encodePacked(creation, abi.encode(_name, _symbol, _decimals, address(this)));
 
     crosschainERC20_ = CREATE3.deployDeterministic(bytecode, salt);
 

@@ -5,7 +5,6 @@ pragma solidity 0.8.25;
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
 
 // Interfaces
-
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {IERC165, IERC7802} from 'interfaces/external/IERC7802.sol';

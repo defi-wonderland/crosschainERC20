@@ -13,9 +13,10 @@ import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
 
 // Interfaces
 import {ICrosschainERC20} from 'interfaces/ICrosschainERC20.sol';
-
+import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
 /// @title CrosschainERC20FactoryTest
 /// @notice Contract for testing the CrosschainERC20Factory contract.
+
 contract CrosschainERC20Factory_Test is Test {
   CrosschainERC20Factory factory;
 
@@ -75,7 +76,7 @@ contract CrosschainERC20Factory_Test is Test {
     _minterLimits[0] = _minterLimit;
 
     // Deploy the CrosschainERC20
-    vm.expectRevert(CrosschainERC20Factory.InvalidLength.selector);
+    vm.expectRevert(ICrosschainERC20Factory.InvalidLength.selector);
     factory.deployCrosschainERC20(name, symbol, DECIMALS, _minterLimits, _burnerLimits, _bridges, owner);
   }
 

@@ -6,13 +6,13 @@ import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
 
+// Interfaces
+import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
+
 // Libraries
 import {CREATE3} from 'solady/utils/CREATE3.sol';
 
-contract CrosschainERC20Factory {
-  /// @notice Thrown when the length of the minter limits, burner limits, or bridges arrays are not equal
-  error InvalidLength();
-
+contract CrosschainERC20Factory is ICrosschainERC20Factory {
   /// @notice Deploys a new CrosschainERC20 contract and returns the address
   /// @param _name The name of the token
   /// @param _symbol The symbol of the token

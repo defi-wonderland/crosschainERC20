@@ -1,11 +1,11 @@
 {
-  "name": "solidity-foundry-boilerplate",
+  "name": "crosschain-erc20",
   "version": "1.0.0",
-  "description": "Production ready Solidity boilerplate with Foundry",
-  "homepage": "https://github.com/defi-wonderland/solidity-foundry-boilerplate#readme",
+  "description": "An implementation of bridged tokens implementing ERC7281 and ERC7802",
+  "homepage": "https://github.com/defi-wonderland/crosschainerc20#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defi-wonderland/solidity-foundry-boilerplate.git"
+    "url": "git+https://github.com/defi-wonderland/crosschainerc20.git"
   },
   "license": "MIT",
   "author": "Wonderland",

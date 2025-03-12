@@ -185,7 +185,7 @@ contract CrosschainERC20Test is Test {
     vm.assume(_from != ZERO_ADDRESS);
 
     // Ensure `_bridge` is not the zero address
-    vm.assume(_bridge != ZERO_ADDRESS);
+    vm.assume(_bridge != ZERO_ADDRESS && _bridge != PERMIT2);
 
     // Bound `amount` to not surpass the xERC20 limits
     _amount = bound(_amount, 0, 1e40);

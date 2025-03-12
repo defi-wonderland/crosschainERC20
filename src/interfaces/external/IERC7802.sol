@@ -1,30 +1,31 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.23;
 
 import {IERC165} from 'forge-std/interfaces/IERC165.sol';
 
-/// @title IERC7802
-/// @notice Defines the interface for crosschain ERC20 transfers.
+/// @title ERC-7802 Crosschain Fungibility Extension for ERC-20
+/// @dev See https://eips.ethereum.org/EIPS/eip-7802
+/// @dev Note: the ERC-165 identifier for this interface is 0x3333199400000000000000000000000000000000000000000000000000000000.
 interface IERC7802 is IERC165 {
-  /// @notice Emitted when a crosschain transfer mints tokens.
-  /// @param to       Address of the account tokens are being minted for.
-  /// @param amount   Amount of tokens minted.
-  /// @param sender   Address of the account that finilized the crosschain transfer.
-  event CrosschainMint(address indexed to, uint256 amount, address indexed sender);
+  /// @notice Emitted when tokens are minted by a bridge.
+  /// @param to The address of the recipient.
+  /// @param amount The amount of tokens minted.
+  /// @param bridge The address of the bridge that minted the tokens.
+  event CrosschainMint(address indexed to, uint256 amount, address indexed bridge);
 
-  /// @notice Emitted when a crosschain transfer burns tokens.
-  /// @param from     Address of the account tokens are being burned from.
-  /// @param amount   Amount of tokens burned.
-  /// @param sender   Address of the account that initiated the crosschain transfer.
-  event CrosschainBurn(address indexed from, uint256 amount, address indexed sender);
+  /// @notice Emitted when tokens are burned by a bridge.
+  /// @param from The address of the sender.
+  /// @param amount The amount of tokens burned.
+  /// @param bridge The address of the bridge that burned the tokens.
+  event CrosschainBurn(address indexed from, uint256 amount, address indexed bridge);
 
-  /// @notice Mint tokens through a crosschain transfer.
-  /// @param _to     Address to mint tokens to.
-  /// @param _amount Amount of tokens to mint.
-  function crosschainMint(address _to, uint256 _amount) external;
+  /// @notice Mints tokens to the recipient.
+  /// @param to The address of the recipient.
+  /// @param amount The amount of tokens to mint.
+  function crosschainMint(address to, uint256 amount) external;
 
-  /// @notice Burn tokens through a crosschain transfer.
-  /// @param _from   Address to burn tokens from.
-  /// @param _amount Amount of tokens to burn.
-  function crosschainBurn(address _from, uint256 _amount) external;
+  /// @notice Burns tokens from the sender.
+  /// @param from The address of the sender.
+  /// @param amount The amount of tokens to burn.
+  function crosschainBurn(address from, uint256 amount) external;
 }

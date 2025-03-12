@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.23;
 
 /// @title ICrosschainERC20Factory
 /// @notice This interface is available on the CrosschainERC20Factory contract.

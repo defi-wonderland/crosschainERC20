@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.23;
 
 // Interfaces
-
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
 import {IERC20Solady} from 'interfaces/external/IERC20Solady.sol';
 import {IERC7802} from 'interfaces/external/IERC7802.sol';
@@ -18,19 +17,6 @@ interface ICrosschainERC20 is IERC20Solady, IXERC20, IERC7802 {
   error InvalidShortString();
   error StringTooLong(string str);
 
-  // ERC20Permit functions
-  function permit(
-    address owner,
-    address spender,
-    uint256 value,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) external;
-  function nonces(address owner) external view returns (uint256);
-  function DOMAIN_SEPARATOR() external view returns (bytes32);
-
   // XERC20 functions
   function FACTORY() external view returns (address);
   function bridges(address)
@@ -44,6 +30,19 @@ interface ICrosschainERC20 is IERC20Solady, IXERC20, IERC7802 {
   // Ownable functions
   function owner() external view returns (address);
   function renounceOwnership() external;
+
+  // ERC20Permit functions
+  function permit(
+    address owner,
+    address spender,
+    uint256 value,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external;
+  function nonces(address owner) external view returns (uint256);
+  function DOMAIN_SEPARATOR() external view returns (bytes32);
 
   // Contract functions
   function supportsInterface(bytes4 _interfaceId) external view returns (bool);

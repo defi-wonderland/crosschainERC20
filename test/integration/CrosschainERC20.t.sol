@@ -44,7 +44,7 @@ abstract contract CrosschainERC20_e2e_Base is Test {
 
   /// @notice Test setup.
   function setUp() public virtual {
-    vm.createSelectFork(vm.envString('MAINNET_RPC_URL'));
+    vm.createSelectFork(vm.envString('MAINNET_RPC'));
     crosschainERC20Factory = ICrosschainERC20Factory(address(new CrosschainERC20Factory()));
   }
 

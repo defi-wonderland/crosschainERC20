@@ -66,7 +66,7 @@ abstract contract IntegrationBase is Test {
     address[] memory bridges,
     uint256 _minterLimit,
     uint256 _burnerLimit
-  ) internal view returns (address[] memory bridges_, uint256[] memory minterLimits_, uint256[] memory burnerLimits_) {
+  ) internal pure returns (address[] memory bridges_, uint256[] memory minterLimits_, uint256[] memory burnerLimits_) {
     // Create the arrays with length matching input bridges
     uint256 length = bridges.length;
     bridges_ = new address[](length);

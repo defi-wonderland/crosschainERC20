@@ -14,10 +14,10 @@ import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
 // Interfaces
 import {ICrosschainERC20} from 'interfaces/ICrosschainERC20.sol';
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
-/// @title CrosschainERC20FactoryTest
-/// @notice Contract for testing the CrosschainERC20Factory contract.
 
-contract CrosschainERC20Factory_Test is Test {
+/// @title UnitCrosschainERC20Factory
+/// @notice Contract for testing the CrosschainERC20Factory contract.
+contract UnitCrosschainERC20Factory is Test {
   CrosschainERC20Factory internal _factory;
 
   address internal _owner = makeAddr('owner');
@@ -63,7 +63,7 @@ contract CrosschainERC20Factory_Test is Test {
   /// of different lengths.
   /// @param _minterLimit The minter limit.
   /// @param _burnerLimit The burner limit.
-  function test_deployCrosschainERC20_mismatchedLengths_reverts(uint256 _minterLimit, uint256 _burnerLimit) public {
+  function test_DeployCrosschainERC20RevertsWhenMismatchedLengths(uint256 _minterLimit, uint256 _burnerLimit) public {
     // Bound limits in allowed range
     _minterLimit = bound(_minterLimit, 1, type(uint256).max >> 1);
     _burnerLimit = bound(_burnerLimit, 1, type(uint256).max >> 1);
@@ -83,7 +83,7 @@ contract CrosschainERC20Factory_Test is Test {
   /// @notice Test that the deployCrosschainERC20 function succeeds.
   /// @param _minterLimit The minter limit.
   /// @param _burnerLimit The burner limit.
-  function test_deployCrosschainERC20_deployment_succeeds(uint256 _minterLimit, uint256 _burnerLimit) public {
+  function test_DeployCrosschainERC20Succeeds(uint256 _minterLimit, uint256 _burnerLimit) public {
     // Bound limits in allowed range
     _minterLimit = bound(_minterLimit, 1, type(uint256).max >> 1);
     _burnerLimit = bound(_burnerLimit, 1, type(uint256).max >> 1);
@@ -108,7 +108,7 @@ contract CrosschainERC20Factory_Test is Test {
   /// @notice Test that the deployCrosschainERC20 function sets the limits correctly.
   /// @param _minterLimit The minter limit.
   /// @param _burnerLimit The burner limit.
-  function test_deployCrosschainERC20_setLimits_succeeds(uint256 _minterLimit, uint256 _burnerLimit) public {
+  function test_DeployCrosschainERC20SetsLimitsCorrectly(uint256 _minterLimit, uint256 _burnerLimit) public {
     // Bound limits in allowed range
     _minterLimit = bound(_minterLimit, 1, type(uint256).max >> 1);
     _burnerLimit = bound(_burnerLimit, 1, type(uint256).max >> 1);
@@ -131,7 +131,7 @@ contract CrosschainERC20Factory_Test is Test {
   }
 
   /// @notice Test that the deployCrosschainERC20 function transfers the ownership to the deployer.
-  function test_deployCrosschainERC20_transferOwnership_succeeds() public {
+  function test_DeployCrosschainERC20TransfersOwnership() public {
     // Get the bridges with limits
     (address[] memory _bridges, uint256[] memory _minterLimits, uint256[] memory _burnerLimits) =
       _getBridgesWithLimits(1, 1);
@@ -145,7 +145,7 @@ contract CrosschainERC20Factory_Test is Test {
   }
 
   /// @notice Test that the deployCrosschainERC20WithLockbox function succeeds.
-  function test_deployCrosschainERC20WithLockbox_deployment_succeeds(uint256 _minterLimit, uint256 _burnerLimit) public {
+  function test_DeployCrosschainERC20WithLockboxSucceeds(uint256 _minterLimit, uint256 _burnerLimit) public {
     // Bound limits in allowed range
     _minterLimit = bound(_minterLimit, 1, type(uint256).max >> 1);
     _burnerLimit = bound(_burnerLimit, 1, type(uint256).max >> 1);
@@ -184,7 +184,7 @@ contract CrosschainERC20Factory_Test is Test {
   }
 
   /// @notice Test that the deployCrosschainERC20WithLockbox function sets the lockbox correctly.
-  function test_deployCrosschainERC20WithLockbox_setLockbox_succeeds() public {
+  function test_DeployCrosschainERC20WithLockboxSetsLockbox() public {
     // Get the bridges with limits
     (address[] memory _bridges, uint256[] memory _minterLimits, uint256[] memory _burnerLimits) =
       _getBridgesWithLimits(1, 1);
@@ -207,7 +207,7 @@ contract CrosschainERC20Factory_Test is Test {
   }
 
   /// @notice Test that the deployERC7802Adapter function succeeds.
-  function test_deployERC7802Adapter_deployment_succeeds() public {
+  function test_DeployERC7802AdapterSucceeds() public {
     address _xerc20 = address(makeAddr('xERC20'));
 
     // Deploy the ERC7802Adapter

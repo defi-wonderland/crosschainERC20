@@ -13,9 +13,9 @@ import {ERC20} from 'solady/tokens/ERC20.sol';
 // Testing utilities
 import {Test} from 'forge-std/Test.sol';
 
-/// @title CrosschainERC20Test
+/// @title UnitCrosschainERC20
 /// @notice Contract for testing the CrosschainERC20 contract.
-contract CrosschainERC20Test is Test {
+contract UnitCrosschainERC20 is Test {
   CrosschainERC20 public crosschainERC20;
   address internal constant _PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
   address internal constant _ZERO_ADDRESS = address(0);
@@ -27,7 +27,7 @@ contract CrosschainERC20Test is Test {
   }
 
   /// @notice Tests the `allowance` function when the spender is Permit2.
-  function testFuzz_allowance_whenSpentFromPermit2_succeeds(address _user, address _user2, uint256 _amount) public {
+  function test_MaxAllowanceWhenSpentFromPermit2(address _user, address _user2, uint256 _amount) public {
     // Ensure the users are neither Permit2 nor the zero address
     vm.assume(_user != _PERMIT2 && _user != _ZERO_ADDRESS && _user != _user2);
     vm.assume(_user2 != _PERMIT2 && _user2 != _ZERO_ADDRESS);
@@ -51,7 +51,7 @@ contract CrosschainERC20Test is Test {
   }
 
   /// @notice Tests the `burn` function reverts when the allowance is insufficient.
-  function testFuzz_burn_withoutApproval_reverts(uint256 _amount, address _tokenBridge, address _tokenOwner) public {
+  function test_BurnRevertWhenInsufficientAllowance(uint256 _amount, address _tokenBridge, address _tokenOwner) public {
     // Bound `amount` to not surpass the xERC20 limits
     _amount = bound(_amount, 1, 1e40); // If `amount` is 0, the `burn` function will not revert as expected
 
@@ -80,7 +80,7 @@ contract CrosschainERC20Test is Test {
   }
 
   /// @notice Tests the `crosschainBurn` function reverts when the allowance is insufficient.
-  function testFuzz_crosschainBurn_withoutApproval_reverts(
+  function test_CrosschainBurnRevertWhenInsufficientAllowance(
     uint256 _amount,
     address _tokenBridge,
     address _tokenOwner
@@ -113,7 +113,7 @@ contract CrosschainERC20Test is Test {
   }
 
   /// @notice Tests the `burn` function works by expecting the allowance to be reduced.
-  function testFuzz_burn_works(uint256 _amount, address _tokenBridge, address _tokenOwner) public {
+  function test_BurnWhenApproved(uint256 _amount, address _tokenBridge, address _tokenOwner) public {
     // Bound `amount` to not surpass the xERC20 limits
     _amount = bound(_amount, 1, 1e40);
 
@@ -157,7 +157,7 @@ contract CrosschainERC20Test is Test {
   }
 
   /// @notice Tests the `crosschainMint` succeeds.
-  function testFuzz_crosschainMint_succeeds(address _to, uint256 _amount, address _bridge) public {
+  function test_CrosschainMintWhenApproved(address _to, uint256 _amount, address _bridge) public {
     // Ensure `_to` is not the zero address
     vm.assume(_to != _ZERO_ADDRESS);
 
@@ -180,7 +180,7 @@ contract CrosschainERC20Test is Test {
   }
 
   /// @notice Tests the `crosschainBurn` succeeds.
-  function testFuzz_crosschainBurn_succeeds(address _from, uint256 _amount, address _bridge) public {
+  function test_CrosschainBurnWhenApproved(address _from, uint256 _amount, address _bridge) public {
     // Ensure `_from` is not the zero address
     vm.assume(_from != _ZERO_ADDRESS);
 
@@ -212,7 +212,7 @@ contract CrosschainERC20Test is Test {
 
   /// @notice Tests that the `supportsInterface` function returns true for the `IERC7802`, `IERC165`, `IERC20`, and
   /// `IXERC20` interfaces.
-  function test_supportInterface_succeeds() public view {
+  function test_SupportInterfaceWhenSupported() public view {
     assertTrue(crosschainERC20.supportsInterface(type(IERC165).interfaceId));
     assertTrue(crosschainERC20.supportsInterface(type(IERC7802).interfaceId));
     assertTrue(crosschainERC20.supportsInterface(type(IERC20).interfaceId));
@@ -221,7 +221,7 @@ contract CrosschainERC20Test is Test {
 
   /// @notice Tests that the `supportsInterface` function returns false for any other interface than the
   /// `IERC7802`, `IERC165`, `IERC20`, and `IXERC20` ones.
-  function testFuzz_supportInterface_works(bytes4 _interfaceId) public view {
+  function test_SupportInterfaceWhenUnsupported(bytes4 _interfaceId) public view {
     vm.assume(_interfaceId != type(IERC165).interfaceId);
     vm.assume(_interfaceId != type(IERC7802).interfaceId);
     vm.assume(_interfaceId != type(IERC20).interfaceId);

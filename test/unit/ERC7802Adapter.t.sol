@@ -13,7 +13,9 @@ import {IERC165, IERC7802} from 'interfaces/external/IERC7802.sol';
 // Target contract
 import {ERC7802Adapter} from 'src/contracts/ERC7802Adapter.sol';
 
-contract ERC7802AdapterTest is Test {
+/// @title UnitERC7802Adapter
+/// @notice Contract for testing the ERC7802Adapter contract.
+contract UnitERC7802Adapter is Test {
   address internal _bridge = makeAddr('bridge');
   address internal _xerc20 = makeAddr('XERC20');
 
@@ -31,29 +33,30 @@ contract ERC7802AdapterTest is Test {
   }
 
   /// @notice Tests the `constructor` sets the `XERC20` contract.
-  function test_constructor_setXERC20_succeeds() public view {
+  function test_ConstructorSetsXERC20() public view {
     // Ensure the `XERC20` contract is set
     assertEq(address(_adapter.XERC20()), _xerc20);
   }
 
   /// @notice Tests the `constructor` sets the `BRIDGE` address.
-  function test_constructor_setBridge_succeeds() public view {
+  function test_ConstructorSetsBridge() public view {
     // Ensure the `BRIDGE` address is set
     assertEq(address(_adapter.BRIDGE()), _bridge);
   }
 
   /// @notice Tests the `crosschainMint` reverts when the caller is not the bridge.
-  function testFuzz_crosschainMint_callerIsNotBridge_reverts(address _caller) public {
+  function test_CrosschainMintRevertWhenCallerNotBridge(address _caller) public {
     // Ensure the caller is not the bridge
     vm.assume(_caller != _bridge);
 
     // Expect the `crosschainMint` function to revert
     vm.expectRevert(IERC7802Adapter.Unauthorized.selector);
+    vm.prank(_caller);
     _adapter.crosschainMint(address(0), 100);
   }
 
   /// @notice Tests the `crosschainMint` succeeds and emits the `CrosschainMint` event.
-  function testFuzz_crosschainMint_mintXERC20_succeeds(address _to, uint256 _amount) public {
+  function test_CrosschainMintSucceedsAndEmitsEvent(address _to, uint256 _amount) public {
     // Look for the emit of the `CrosschainMint` event
     vm.expectEmit(address(_adapter));
     emit IERC7802.CrosschainMint(_to, _amount, _bridge);
@@ -67,17 +70,18 @@ contract ERC7802AdapterTest is Test {
   }
 
   /// @notice Tests the `crosschainBurn` reverts when the caller is not the bridge.
-  function testFuzz_crosschainBurn_callerIsNotBridge_reverts(address _caller) public {
+  function test_CrosschainBurnRevertWhenCallerNotBridge(address _caller) public {
     // Ensure the caller is not the bridge
     vm.assume(_caller != _bridge);
 
     // Expect the `crosschainBurn` function to revert
     vm.expectRevert(IERC7802Adapter.Unauthorized.selector);
+    vm.prank(_caller);
     _adapter.crosschainBurn(address(0), 100);
   }
 
   /// @notice Tests the `crosschainBurn` succeeds and emits the `CrosschainBurn` event.
-  function testFuzz_crosschainBurn_burnXERC20_succeeds(address _from, uint256 _amount) public {
+  function test_CrosschainBurnSucceedsAndEmitsEvent(address _from, uint256 _amount) public {
     // Look for the emit of the `CrosschainBurn` event
     vm.expectEmit(address(_adapter));
     emit IERC7802.CrosschainBurn(_from, _amount, _bridge);
@@ -91,13 +95,13 @@ contract ERC7802AdapterTest is Test {
   }
 
   /// @notice Tests that the `supportsInterface` function returns true for the `IERC7802` interface.
-  function test_supportsInterface_succeeds() public view {
+  function test_SupportsInterfaceWhenSupported() public view {
     assertTrue(_adapter.supportsInterface(type(IERC165).interfaceId));
     assertTrue(_adapter.supportsInterface(type(IERC7802).interfaceId));
   }
 
   /// @notice Tests that the `supportsInterface` function returns false for any other interface.
-  function test_supportsInterface_works(bytes4 _interfaceId) public view {
+  function test_SupportsInterfaceWhenUnsupported(bytes4 _interfaceId) public view {
     // Ensure the interface is not the `IERC165` or `IERC7802` interface
     vm.assume(_interfaceId != type(IERC165).interfaceId && _interfaceId != type(IERC7802).interfaceId);
 

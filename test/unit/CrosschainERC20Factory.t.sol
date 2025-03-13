@@ -100,9 +100,9 @@ contract UnitCrosschainERC20Factory is Test {
     assertGt(_crosschainERC20.code.length, 0);
 
     // Assert the token name and symbol are correct
-    assertEq(ICrosschainERC20(_crosschainERC20).name(), _name);
-    assertEq(ICrosschainERC20(_crosschainERC20).symbol(), _symbol);
-    assertEq(ICrosschainERC20(_crosschainERC20).decimals(), _DECIMALS);
+    assertEq(CrosschainERC20(_crosschainERC20).name(), _name);
+    assertEq(CrosschainERC20(_crosschainERC20).symbol(), _symbol);
+    assertEq(CrosschainERC20(_crosschainERC20).decimals(), _DECIMALS);
   }
 
   /// @notice Test that the deployCrosschainERC20 function sets the limits correctly.
@@ -141,7 +141,7 @@ contract UnitCrosschainERC20Factory is Test {
       _factory.deployCrosschainERC20(_name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _owner);
 
     // Assert the owner was correctly set
-    assertEq(ICrosschainERC20(_crosschainERC20).owner(), _owner);
+    assertEq(CrosschainERC20(_crosschainERC20).owner(), _owner);
   }
 
   /// @notice Test that the deployCrosschainERC20WithLockbox function succeeds.
@@ -180,7 +180,7 @@ contract UnitCrosschainERC20Factory is Test {
     assertEq(XERC20Lockbox(payable(_crosschainERC20Lockbox)).IS_NATIVE(), false);
 
     // Assert decimals are set correctly
-    assertEq(ICrosschainERC20(_crosschainERC20).decimals(), _DECIMALS);
+    assertEq(CrosschainERC20(_crosschainERC20).decimals(), _DECIMALS);
   }
 
   /// @notice Test that the deployCrosschainERC20WithLockbox function sets the lockbox correctly.
@@ -203,7 +203,7 @@ contract UnitCrosschainERC20Factory is Test {
     assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).XERC20()), _crosschainERC20);
 
     // Assert decimals are set correctly
-    assertEq(ICrosschainERC20(_crosschainERC20).decimals(), _DECIMALS);
+    assertEq(CrosschainERC20(_crosschainERC20).decimals(), _DECIMALS);
   }
 
   /// @notice Test that the deployERC7802Adapter function succeeds.

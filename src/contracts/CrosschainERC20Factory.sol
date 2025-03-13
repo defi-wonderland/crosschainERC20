@@ -13,14 +13,7 @@ import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
 import {CREATE3} from 'solady/utils/CREATE3.sol';
 
 contract CrosschainERC20Factory is ICrosschainERC20Factory {
-  /// @notice Deploys a new CrosschainERC20 contract and returns the address
-  /// @param _name The name of the token
-  /// @param _symbol The symbol of the token
-  /// @param _decimals The decimals of the token
-  /// @param _minterLimits The minter limits for the token
-  /// @param _burnerLimits The burner limits for the token
-  /// @param _bridges The bridges for the token
-  /// @return crosschainERC20_ The address of the new CrosschainERC20 contract
+  /// @inheritdoc ICrosschainERC20Factory
   function deployCrosschainERC20(
     string memory _name,
     string memory _symbol,
@@ -33,16 +26,7 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
   }
 
-  /// @notice Deploys a new CrosschainERC20Lockbox and CrosschainERC20
-  /// @param _name The name of the token
-  /// @param _symbol The symbol of the token
-  /// @param _decimals The decimals of the token
-  /// @param _minterLimits The minter limits for the token
-  /// @param _burnerLimits The burner limits for the token
-  /// @param _bridges The bridges for the token
-  /// @param _baseToken The address of the base token
-  /// @return crosschainERC20_ The address of the new CrosschainERC20 contract
-  /// @return crosschainERC20Lockbox_ The address of the new crosschainERC20Lockbox contract
+  /// @inheritdoc ICrosschainERC20Factory
   function deployCrosschainERC20WithLockbox(
     string memory _name,
     string memory _symbol,
@@ -57,10 +41,7 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     crosschainERC20Lockbox_ = _deployLockbox(crosschainERC20_, _baseToken);
   }
 
-  /// @notice Deploys a new ERC7802Adapter
-  /// @param _xerc20 The address of the xERC20 contract
-  /// @param _bridge The address of the bridge
-  /// @return erc7802Adapter_ The address of the new ERC7802Adapter contract
+  /// @inheritdoc ICrosschainERC20Factory
   function deployERC7802Adapter(address _xerc20, address _bridge) external returns (address erc7802Adapter_) {
     erc7802Adapter_ = _deployERC7802Adapter(_xerc20, _bridge);
   }
@@ -72,6 +53,7 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
   /// @param _minterLimits The minter limits for the token
   /// @param _burnerLimits The burner limits for the token
   /// @param _bridges The bridges for the token
+  /// @param _owner The owner of the new token
   /// @return crosschainERC20_ The address of the new CrosschainERC20 contract
   function _deployCrosschainERC20(
     string memory _name,

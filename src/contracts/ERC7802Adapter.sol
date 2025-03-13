@@ -11,23 +11,23 @@ import {IERC165, IERC7802} from 'interfaces/external/IERC7802.sol';
 /// @notice Adapter for minting/burning xERC20 tokens using a bridge by implementing
 /// the ERC7802 interface.
 contract ERC7802Adapter is IERC7802Adapter {
-  /// @notice The xERC20 contract to adapt.
+  /// @inheritdoc IERC7802Adapter
   IXERC20 public immutable XERC20;
 
-  /// @notice The bridge address.
+  /// @inheritdoc IERC7802Adapter
   address public immutable BRIDGE;
 
-  /// @notice Constructs the ERC7802Adapter.
-  /// @param _xerc20 The xERC20 contract to adapt.
-  /// @param _bridge The bridge address.
+  /**
+   * @notice Constructs the ERC7802Adapter.
+   * @param _xerc20 The xERC20 contract to adapt.
+   * @param _bridge The bridge address.
+   */
   constructor(IXERC20 _xerc20, address _bridge) {
     XERC20 = _xerc20;
     BRIDGE = _bridge;
   }
 
-  /// @notice Allows the bridge to mint tokens.
-  /// @param _to     Address to mint tokens to.
-  /// @param _amount Amount of tokens to mint.
+  /// @inheritdoc IERC7802
   function crosschainMint(address _to, uint256 _amount) external {
     if (msg.sender != BRIDGE) revert Unauthorized();
 
@@ -36,9 +36,7 @@ contract ERC7802Adapter is IERC7802Adapter {
     emit CrosschainMint(_to, _amount, msg.sender);
   }
 
-  /// @notice Allows the bridge to burn tokens.
-  /// @param _from   Address to burn tokens from.
-  /// @param _amount Amount of tokens to burn.
+  /// @inheritdoc IERC7802
   function crosschainBurn(address _from, uint256 _amount) external {
     if (msg.sender != BRIDGE) revert Unauthorized();
 

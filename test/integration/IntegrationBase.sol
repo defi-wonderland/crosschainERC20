@@ -16,11 +16,14 @@ import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
 import {IERC7802} from 'interfaces/external/IERC7802.sol';
 
+// Script
+import {DeployCrosschainERC20Factory} from 'script/CrosschainERC20FactoryDeploy.s.sol';
+
 /// @title IntegrationBase
 /// @notice Base contract for integration testing of the CrosschainERC20 paths.
 /// @dev This contract provides common setup and helper functions for CrosschainERC20 integration tests.
 /// @dev Tests included in this contract should pass in every setup.
-abstract contract IntegrationBase is Test {
+abstract contract IntegrationBase is Test, DeployCrosschainERC20Factory {
   // Contracts
   CrosschainERC20Factory internal _crosschainERC20Factory;
   CrosschainERC20 internal _crosschainERC20;
@@ -45,7 +48,7 @@ abstract contract IntegrationBase is Test {
   /// @notice Test setup.
   function setUp() public virtual {
     vm.createSelectFork(vm.envString('MAINNET_RPC'));
-    _crosschainERC20Factory = CrosschainERC20Factory(address(new CrosschainERC20Factory()));
+    _crosschainERC20Factory = run();
   }
 
   /// @notice Helper function to get the 7281 and 7802 bridges.

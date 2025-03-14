@@ -14,6 +14,8 @@ _CrosschainERC20Factory_: The factory is used as a helper to deploy CrosschainER
 
 #### Deploy and Setup CrosschainERC20
 
+Deploys a new `CrosschainERC20` token and sets the owner. Bridges limits can be set on the `deployCrosschainERC20()` function or after the deployment by the owner.
+
 ```mermaid
 sequenceDiagram
     actor D as Deployer
@@ -57,6 +59,8 @@ sequenceDiagram
 
 #### Deploy and setup CrosschainERC20Lockbox
 
+Deploys a new `CrosschainERC20` paired with a `Lockbox`. The lockbox will mint the `CrosschainERC20` tokens when the user deposits ERC20 tokens and burn them when the user withdraws. The lockbox can not be set to a different address after the deployment.
+
 ```mermaid
 sequenceDiagram
     actor D as Deployer
@@ -98,6 +102,8 @@ sequenceDiagram
 ```
 
 #### Deploy and setup ERC7802Adapter
+
+Deploys a new `ERC7802Adapter` paired with a `CrosschainERC20`. The adapter will act as an intermediary layer allowing bridges that implement `ERC7802` to interact with `CrosschainERC20` tokens that don't natively support this interface.
 
 ```mermaid
 sequenceDiagram

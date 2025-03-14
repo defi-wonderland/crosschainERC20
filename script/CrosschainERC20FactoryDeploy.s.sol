@@ -10,6 +10,8 @@ import {Script} from 'forge-std/Script.sol';
 // Utils
 import {CREATE3} from 'solady/utils/CREATE3.sol';
 
+/// @title DeployCrosschainERC20Factory
+/// @notice Template for deploying a new `CrosschainERC20Factory`. Please replace the salt value as needed.
 contract DeployCrosschainERC20Factory is Script {
   function run() public returns (CrosschainERC20Factory _factory) {
     vm.startBroadcast();

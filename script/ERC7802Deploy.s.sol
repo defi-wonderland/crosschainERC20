@@ -8,6 +8,8 @@ import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
 // Script
 import {Script} from 'forge-std/Script.sol';
 
+/// @title DeployERC7802Adapter
+/// @notice Template for deploying a new `ERC7802Adapter`. Please replace values as needed.
 contract DeployERC7802Adapter is Script {
   struct DeploymentParams {
     address _xerc20;

@@ -12,6 +12,8 @@ import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
 // Libraries
 import {CREATE3} from 'solady/utils/CREATE3.sol';
 
+/// @title CrosschainERC20Factory
+/// @notice Factory for deploying `CrosschainERC20` tokens and related contracts.
 contract CrosschainERC20Factory is ICrosschainERC20Factory {
   /// @inheritdoc ICrosschainERC20Factory
   function deployCrosschainERC20(

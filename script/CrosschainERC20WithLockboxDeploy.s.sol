@@ -2,7 +2,6 @@
 pragma solidity 0.8.25;
 
 // Contracts
-
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 import {CrosschainERC20Factory} from 'contracts/CrosschainERC20Factory.sol';
 
@@ -12,6 +11,8 @@ import {IXERC20Lockbox} from '@xERC20/interfaces/IXERC20Lockbox.sol';
 // Script
 import {Script} from 'forge-std/Script.sol';
 
+/// @title DeployCrosschainERC20WithLockbox
+/// @notice Template for deploying a new `CrosschainERC20` paired with a `Lockbox`. Please replace values as needed.
 contract DeployCrosschainERC20WithLockbox is Script {
   struct DeploymentParams {
     string _name;

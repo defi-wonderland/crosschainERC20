@@ -8,6 +8,8 @@ import {CrosschainERC20Factory} from 'contracts/CrosschainERC20Factory.sol';
 // Script
 import {Script} from 'forge-std/Script.sol';
 
+/// @title DeployCrosschainERC20
+/// @notice Template for deploying a new `CrosschainERC20` token. Please replace values as needed.
 contract DeployCrosschainERC20 is Script {
   struct DeploymentParams {
     string _name;

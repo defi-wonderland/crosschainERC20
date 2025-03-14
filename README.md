@@ -1,42 +1,159 @@
-<img src="https://raw.githubusercontent.com/defi-wonderland/brand/v1.0.0/external/solidity-foundry-boilerplate-banner.png" alt="wonderland banner" align="center" />
-<br />
+# CrosschainERC20
 
-<div align="center"><strong>Start your next Solidity project with Foundry in seconds</strong></div>
-<div align="center">A highly scalable foundation focused on DX and best practices</div>
+`CrosschainERC20` is a token implementation that combines [`ERC-7281`](https://ethereum-magicians.org/t/erc-7281-sovereign-bridged-tokens/14979) and [`ERC-7802`](https://ethereum-magicians.org/t/erc-7802-crosschain-token-interface/21508) functionality. This allows tokens to be immediately usable with existing bridge infrastructure while being compatible with the Superchain interop cluster.
 
-<br />
+### Contracts
 
-## Features
+_CrosschainERC20_: A token implementation that extends XERC20 and implements the ERC7802 interface. This allows it to interact with both ERC7281-compatible bridges and ERC7802-compatible bridges, providing unified cross-chain fungibility across any bridge type.
 
-<dl>
-  <dt>Sample contracts</dt>
-  <dd>Basic Greeter contract with an external interface.</dd>
+_ERC7802Adapter_: An adapter contract that provides ERC7802 functionality for existing xERC20 tokens. It acts as an intermediary layer allowing bridges that implement ERC7802 to interact with xERC20 tokens that don't natively support this interface.
 
-  <dt>Foundry setup</dt>
-  <dd>Foundry configuration with multiple custom profiles and remappings.</dd>
+_CrosschainERC20Factory_: The factory is used as a helper to deploy CrosschainERC20 tokens and related contracts. It allows the user to deploy the CrosschainERC20, XERC20Lockbox (with different setup to mint CrosschainERC20 tokens), and ERC7802Adapter in a convenient way while keeping deterministic addresses across chains.
 
-  <dt>Deployment scripts</dt>
-  <dd>Sample scripts to deploy contracts on both mainnet and testnet.</dd>
+### Flows
 
-  <dt>Sample Integration, Unit, Property-based fuzzed and symbolic tests</dt>
-  <dd>Example tests showcasing mocking, assertions and configuration for mainnet forking. As well it includes everything needed in order to check code coverage.</dd>
-  <dd>Unit tests are built based on the <a href="https://twitter.com/PaulRBerg/status/1682346315806539776">Branched-Tree Technique</a>, using <a href="https://github.com/alexfertel/bulloak">Bulloak</a>.
-  <dd>Formal verification and property-based fuzzing are achieved with <a href="https://github.com/a16z/halmos">Halmos</a> and <a href="https://github.com/crytic/medusa">Medusa</a> (resp.).
+#### Deploy and Setup CrosschainERC20
 
-  <dt>Linter</dt>
-  <dd>Simple and fast solidity linting thanks to forge fmt.</dd>
-  <dd>Find missing natspec automatically.</dd>
+Deploys a new `CrosschainERC20` token and sets the owner. Bridges limits can be set on the `deployCrosschainERC20()` function or after the deployment by the owner.
 
-  <dt>Github workflows CI</dt>
-  <dd>Run all tests and see the coverage as you push your changes.</dd>
-  <dd>Export your Solidity interfaces and contracts as packages, and publish them to NPM.</dd>
-</dl>
+```mermaid
+sequenceDiagram
+    actor D as Deployer
+    participant F as Factory
+    participant C as CrosschainERC20
+    actor O as Owner
+
+    D ->> F: deployCrosschainERC20(... owner)
+    F ->> C: constructor(... owner)
+    O ->> C: setLimits(7281 bridge ...)
+    O ->> C: setLimits(7802 bridge ...)
+```
+
+#### CrosschainERC20 Usage
+
+```mermaid
+sequenceDiagram
+    actor A as Alice
+    participant B1 as ERC7281 Bridge
+    participant B2 as ERC7802 Bridge
+    participant C as CrosschainERC20
+
+    A ->> B1: bridgeToken()
+    B1 ->> C: burn()
+    A ->> B2: bridgeToken()
+    B2 ->> C: crosschainBurn()
+```
+
+```mermaid
+sequenceDiagram
+    actor A as Alice
+    participant B1 as ERC7281 Bridge
+    participant B2 as ERC7802 Bridge
+    participant C as CrosschainERC20
+
+    A ->> B1: receiveToken()
+    B1 ->> C: mint()
+    A ->> B2: receiveToken()
+    B2 ->> C: crosschainMint()
+```
+
+#### Deploy and setup CrosschainERC20Lockbox
+
+Deploys a new `CrosschainERC20` paired with a `Lockbox`. The lockbox will mint the `CrosschainERC20` tokens when the user deposits ERC20 tokens and burn them when the user withdraws. The lockbox can not be set to a different address after the deployment.
+
+```mermaid
+sequenceDiagram
+    actor D as Deployer
+    participant F as Factory
+    participant C as CrosschainERC20
+    participant L as Lockbox
+
+    D ->> F: deployCrosschainERC20WithLockbox(... owner)
+    F ->> C: constructor(... owner)
+    F ->> L: constructor(crosschainERC20, ERC20)
+    F ->> C: setLockbox(lockbox)
+    F ->> C: transferOwnership(owner)
+```
+
+#### Lockbox Usage
+
+```mermaid
+sequenceDiagram
+    actor A as Alice
+    participant L as Lockbox
+    participant E as ERC20
+    participant C as CrosschainERC20
+
+    A ->> L: deposit()
+    L ->> E: transferFrom(Alice, Lockbox)
+    L ->> C: mint(Alice)
+```
+
+```mermaid
+sequenceDiagram
+    actor A as Alice
+    participant L as Lockbox
+    participant E as ERC20
+    participant C as CrosschainERC20
+
+    A ->> L: withdraw()
+    L ->> E: transfer(Alice, amount)
+    L ->> C: burn(Alice)
+```
+
+#### Deploy and setup ERC7802Adapter
+
+Deploys a new `ERC7802Adapter` paired with a `CrosschainERC20`. The adapter will act as an intermediary layer allowing bridges that implement `ERC7802` to interact with `CrosschainERC20` tokens that don't natively support this interface.
+
+```mermaid
+sequenceDiagram
+    actor D as Deployer
+    participant F as Factory
+    participant A as ERC7802Adapter
+
+    D ->> F: deployERC7802Adapter(xerc20, bridge)
+    F ->> A: constructor(xerc20, bridge)
+```
+
+```mermaid
+sequenceDiagram
+    actor O as Owner
+    participant X as XERC20
+
+    O ->> X: setLimits(adapter)
+```
+
+#### Adapter Usage
+
+```mermaid
+sequenceDiagram
+    actor A as Alice
+    participant B as ERC7802 Bridge
+    participant AD as ERC7802Adapter
+    participant C as XERC20
+
+    A ->> B: bridgeToken()
+    B ->> AD: crosschainBurn()
+    AD ->> C: burn()
+```
+
+```mermaid
+sequenceDiagram
+    actor A as Alice
+    participant B as ERC7802 Bridge
+    participant AD as ERC7802Adapter
+    participant C as XERC20
+
+    A ->> B: receiveToken()
+    B ->> AD: crosschainMint()
+    AD ->> C: mint()
+```
 
 ## Setup
 
 1. Install Foundry by following the instructions from [their repository](https://github.com/foundry-rs/foundry#installation).
-2. Copy the `.env.example` file to `.env` and fill in the variables.
-3. Install the dependencies by running: `yarn install`. In case there is an error with the commands, run `foundryup` and try them again.
+2. Copy the `.env.example` file to `.env` and fill in the variables
+3. Install the dependencies by running : `yarn install && forge install`
 
 ## Build
 
@@ -54,121 +171,12 @@ yarn build:optimized
 
 ## Running tests
 
-Unit tests should be isolated from any externalities, while Integration usually run in a fork of the blockchain. In this boilerplate you will find example of both.
-
-In order to run both unit and integration tests, run:
+Unit tests should be isolated from any externalities, while E2E usually run in a fork of the blockchain.
 
 ```bash
 yarn test
 ```
 
-In order to just run unit tests, run:
-
-```bash
-yarn test:unit
-```
-
-In order to run unit tests and run way more fuzzing than usual (5x), run:
-
-```bash
-yarn test:unit:deep
-```
-
-In order to just run integration tests, run:
-
-```bash
-yarn test:integration
-```
-
-In order to start the Medusa fuzzing campaign (requires [Medusa](https://github.com/crytic/medusa/blob/master/docs/src/getting_started/installation.md) installed), run:
-
-```bash
-yarn test:fuzz
-```
-
-In order to just run the symbolic execution tests (requires [Halmos](https://github.com/a16z/halmos/blob/main/README.md#installation) installed), run:
-
-```bash
-yarn test:symbolic
-```
-
-In order to check your current code coverage, run:
-
-```bash
-yarn coverage
-```
-
-<br>
-
-## Deploy & verify
-
-### Setup
-
-Configure the `.env` variables and source them:
-
-```bash
-source .env
-```
-
-Import your private keys into Foundry's encrypted keystore:
-
-```bash
-cast wallet import $MAINNET_DEPLOYER_NAME --interactive
-```
-
-```bash
-cast wallet import $SEPOLIA_DEPLOYER_NAME --interactive
-```
-
-### Sepolia
-
-```bash
-yarn deploy:sepolia
-```
-
-### Mainnet
-
-```bash
-yarn deploy:mainnet
-```
-
-The deployments are stored in ./broadcast
-
-See the [Foundry Book for available options](https://book.getfoundry.sh/reference/forge/forge-create.html).
-
-## Export And Publish
-
-Export TypeScript interfaces from Solidity contracts and interfaces providing compatibility with TypeChain. Publish the exported packages to NPM.
-
-To enable this feature, make sure you've set the `NPM_TOKEN` on your org's secrets. Then set the job's conditional to `true`:
-
-```yaml
-jobs:
-  export:
-    name: Generate Interfaces And Contracts
-    # Remove the following line if you wish to export your Solidity contracts and interfaces and publish them to NPM
-    if: true
-    ...
-```
-
-Also, remember to update the `package_name` param to your package name:
-
-```yaml
-- name: Export Solidity - ${{ matrix.export_type }}
-  uses: defi-wonderland/solidity-exporter-action@1dbf5371c260add4a354e7a8d3467e5d3b9580b8
-  with:
-    # Update package_name with your package name
-    package_name: "my-cool-project"
-    ...
-
-
-- name: Publish to NPM - ${{ matrix.export_type }}
-  # Update `my-cool-project` with your package name
-  run: cd export/my-cool-project-${{ matrix.export_type }} && npm publish --access public
-  ...
-```
-
-You can take a look at our [solidity-exporter-action](https://github.com/defi-wonderland/solidity-exporter-action) repository for more information and usage examples.
-
 ## Licensing
-The primary license for the boilerplate is MIT, see [`LICENSE`](https://github.com/defi-wonderland/solidity-foundry-boilerplate/blob/main/LICENSE)
+
+The primary license for CrosschainERC20 is MIT, see [LICENSE](./LICENSE).

@@ -12,7 +12,6 @@ import {CrosschainERC20Factory} from 'contracts/CrosschainERC20Factory.sol';
 import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
 
 // Interfaces
-import {ICrosschainERC20} from 'interfaces/ICrosschainERC20.sol';
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
 
 /// @title UnitCrosschainERC20Factory

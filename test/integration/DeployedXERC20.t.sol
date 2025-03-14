@@ -6,9 +6,10 @@ import {IntegrationBase} from './IntegrationBase.sol';
 
 // Contracts
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
-
 import {CrosschainERC20} from 'src/contracts/CrosschainERC20.sol';
-import {ERC7802Adapter} from 'src/contracts/ERC7802Adapter.sol';
+
+// Utils
+import {CREATE3} from 'solady/utils/CREATE3.sol';
 
 /// @title IntegrationCrosschainERC20_DeployedXERC20Path
 /// @notice Contract for testing the CrosschainERC20 deployed XERC20 path.
@@ -18,21 +19,24 @@ contract IntegrationCrosschainERC20_DeployedXERC20Path is IntegrationBase {
     super.setUp();
 
     // Deploy the XERC20
-    XERC20 xerc20 = new XERC20('Token', 'TKN', DECIMALS, bob);
+    bytes32 salt = keccak256(abi.encodePacked('Token', 'TKN', _DECIMALS, _bob));
+    bytes memory creation = type(XERC20).creationCode;
+    bytes memory bytecode = abi.encodePacked(creation, abi.encode('Token', 'TKN', _DECIMALS, _bob));
+    XERC20 xerc20 = XERC20(CREATE3.deployDeterministic(bytecode, salt));
 
     // Deploy adapter
-    _adapter = ERC7802Adapter(_crosschainERC20Factory.deployERC7802Adapter(address(xerc20), erc7802Bridge));
+    _adapter = _adapterDeployer.run();
 
     // Set limits for the bridges
-    vm.startPrank(bob);
-    xerc20.setLimits(erc7281Bridge, MINT_LIMIT, BURN_LIMIT);
-    xerc20.setLimits(address(_adapter), MINT_LIMIT, BURN_LIMIT);
+    vm.startPrank(_bob);
+    xerc20.setLimits(_erc7281Bridge, _MINT_LIMIT, _BURN_LIMIT);
+    xerc20.setLimits(address(_adapter), _MINT_LIMIT, _BURN_LIMIT);
     vm.stopPrank();
 
     // Set the _crosschainERC20
     _crosschainERC20 = CrosschainERC20(address(xerc20));
 
     // Deal tokens
-    deal(address(xerc20), alice, BURN_LIMIT);
+    deal(address(xerc20), _alice, _BURN_LIMIT);
   }
 }

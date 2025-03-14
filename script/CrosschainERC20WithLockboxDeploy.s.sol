@@ -55,6 +55,28 @@ contract DeployCrosschainERC20WithLockbox is Script {
       _baseToken: 0x6B175474E89094C44Da98b954EedeAC495271d0F, // DAI
       _owner: 0x555B1Ea88dD9B9DA96bc0E35805e1D1C6802552f
     });
+
+    _deploymentParams[420_120_000] = DeploymentParams({
+      _name: 'Test',
+      _symbol: 'TST',
+      _decimals: 18,
+      _minterLimits: minterLimits,
+      _burnerLimits: burnerLimits,
+      _bridges: bridges,
+      _baseToken: 0x48824f0345964D1002bF4Ddd1F72BA99B5dbE5d5,
+      _owner: 0xF01fB1756DfE192d3DDD84318B7A37276ef41b5B
+    });
+
+    _deploymentParams[420_120_001] = DeploymentParams({
+      _name: 'Test',
+      _symbol: 'TST',
+      _decimals: 18,
+      _minterLimits: minterLimits,
+      _burnerLimits: burnerLimits,
+      _bridges: bridges,
+      _baseToken: 0x48824f0345964D1002bF4Ddd1F72BA99B5dbE5d5,
+      _owner: 0xF01fB1756DfE192d3DDD84318B7A37276ef41b5B
+    });
   }
 
   function run() public returns (CrosschainERC20 _crosschainERC20, IXERC20Lockbox _lockbox) {

@@ -27,6 +27,16 @@ contract DeployERC7802Adapter is Script {
       _xerc20: 0x9A32a40B7cD0316A57E93B73F977E42449c7B17f, // Determined by CREATE3 deployment
       _bridge: 0x6DE6A8af4D110939A00b9BE8D3B5361730e3AF24 // Result of `makeAddr('erc7802Bridge')`
     });
+
+    _deploymentParams[420_120_000] = DeploymentParams({
+      _xerc20: 0x9A32a40B7cD0316A57E93B73F977E42449c7B17f, // Determined by CREATE3 deployment
+      _bridge: 0x6DE6A8af4D110939A00b9BE8D3B5361730e3AF24 // Result of `makeAddr('erc7802Bridge')`
+    });
+
+    _deploymentParams[420_120_001] = DeploymentParams({
+      _xerc20: 0x9A32a40B7cD0316A57E93B73F977E42449c7B17f, // Determined by CREATE3 deployment
+      _bridge: 0x6DE6A8af4D110939A00b9BE8D3B5361730e3AF24 // Result of `makeAddr('erc7802Bridge')`
+    });
   }
 
   function run() public returns (ERC7802Adapter _adapter) {

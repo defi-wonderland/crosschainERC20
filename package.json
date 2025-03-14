@@ -1,11 +1,11 @@
 {
-  "name": "solidity-foundry-boilerplate",
+  "name": "crosschain-erc20",
   "version": "1.0.0",
-  "description": "Production ready Solidity boilerplate with Foundry",
-  "homepage": "https://github.com/defi-wonderland/solidity-foundry-boilerplate#readme",
+  "description": "A token implementation that combines ERC-7281 and ERC-7802 functionality.",
+  "homepage": "https://github.com/defi-wonderland/crosschainerc20#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defi-wonderland/solidity-foundry-boilerplate.git"
+    "url": "git+https://github.com/defi-wonderland/crosschainerc20.git"
   },
   "license": "MIT",
   "author": "Wonderland",
@@ -23,7 +23,6 @@
     "test": "forge test -vvv",
     "test:fuzz": "medusa fuzz",
     "test:integration": "forge test --match-contract Integration -vvv",
-    "test:symbolic": "halmos",
     "test:unit": "forge test --match-contract Unit -vvv",
     "test:unit:deep": "FOUNDRY_FUZZ_RUNS=5000 yarn test:unit"
   },
@@ -36,10 +35,11 @@
     "@commitlint/cli": "19.3.0",
     "@commitlint/config-conventional": "19.2.2",
     "@defi-wonderland/natspec-smells": "1.1.6",
+    "@defi-wonderland/xerc20": "github:defi-wonderland/xerc20#7e110fa3418ff205f111c520f0ee33aa67fc499f",
     "forge-std": "github:foundry-rs/forge-std#1.9.2",
-    "halmos-cheatcodes": "github:a16z/halmos-cheatcodes#c0d8655",
     "husky": ">=9",
     "lint-staged": ">=10",
+    "solady": "^0.1.10",
     "solhint-community": "4.0.1",
     "sort-package-json": "2.10.0"
   }

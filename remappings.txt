@@ -1,5 +1,6 @@
 forge-std/=node_modules/forge-std/src
-halmos-cheatcodes=node_modules/halmos-cheatcodes
+@xERC20/=node_modules/@defi-wonderland/xerc20/solidity
+solady/=node_modules/solady/src
 
 contracts/=src/contracts
 interfaces/=src/interfaces

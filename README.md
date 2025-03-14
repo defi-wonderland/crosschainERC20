@@ -179,4 +179,4 @@ yarn test
 
 ## Licensing
 
-The primary license for xERC20 is MIT, see [LICENSE](./LICENSE).
+The primary license for CrosschainERC20 is MIT, see [LICENSE](./LICENSE).

@@ -4,7 +4,7 @@
 
 ### Contracts
 
-_CrosschainERC20_: A token implementation that extends XERC20 and implements the ERC7802 interface. This allows it to interact with both ERC-7281-compatible bridges and ERC7802-compatible bridges, providing unified cross-chain fungibility across any bridge type.
+_CrosschainERC20_: A token implementation that extends XERC20 and implements the ERC7802 interface. This allows it to interact with both ERC7281-compatible bridges and ERC7802-compatible bridges, providing unified cross-chain fungibility across any bridge type.
 
 _ERC7802Adapter_: An adapter contract that provides ERC7802 functionality for existing xERC20 tokens. It acts as an intermediary layer allowing bridges that implement ERC7802 to interact with xERC20 tokens that don't natively support this interface.
 

@@ -21,7 +21,7 @@ contract DeployERC7802Adapter is Script {
   mapping(uint256 _chainId => DeploymentParams _params) internal _deploymentParams;
 
   function setUp() public {
-    _factory = CrosschainERC20Factory(0x0b1772D3f03f4f21Faf2Ca5aa8689e6d13337aF3); // Determined by CREATE3 deployment
+    _factory = CrosschainERC20Factory(0xe4c221582E95A0d84b29d294AF8235Fc74E1CF60); // Determined by CREATE3 deployment
 
     _deploymentParams[1] = DeploymentParams({
       _xerc20: 0x9A32a40B7cD0316A57E93B73F977E42449c7B17f, // Determined by CREATE3 deployment

@@ -31,7 +31,7 @@ contract DeployCrosschainERC20WithLockbox is Script {
   mapping(uint256 _chainId => DeploymentParams _params) internal _deploymentParams;
 
   function setUp() public {
-    _factory = CrosschainERC20Factory(0x0b1772D3f03f4f21Faf2Ca5aa8689e6d13337aF3); // Determined because of CREATE3 deployment
+    _factory = CrosschainERC20Factory(0xe4c221582E95A0d84b29d294AF8235Fc74E1CF60); // Determined because of CREATE3 deployment
 
     uint256[] memory minterLimits = new uint256[](2);
     uint256[] memory burnerLimits = new uint256[](2);

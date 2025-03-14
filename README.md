@@ -126,7 +126,7 @@ sequenceDiagram
     participant AD as ERC7802Adapter
     participant C as XERC20
 
-    A ->> AD: bridgeToken()
+    A ->> B: bridgeToken()
     B ->> AD: crosschainBurn()
     AD ->> C: burn()
 ```

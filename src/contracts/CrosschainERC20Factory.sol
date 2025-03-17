@@ -70,7 +70,7 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
 
     if (_minterLimits.length != _bridgesLength || _burnerLimits.length != _bridgesLength) revert InvalidLength();
 
-    bytes32 salt = keccak256(abi.encodePacked(_name, _symbol, msg.sender));
+    bytes32 salt = keccak256(abi.encodePacked(_name, _symbol, _decimals, msg.sender));
     bytes memory creation = type(CrosschainERC20).creationCode;
     bytes memory bytecode = abi.encodePacked(creation, abi.encode(_name, _symbol, _decimals, address(this)));
 

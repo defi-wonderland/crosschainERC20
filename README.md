@@ -12,9 +12,17 @@ _CrosschainERC20Factory_: The factory is used as a helper to deploy CrosschainER
 
 ### Flows
 
+The starting point for each flow is the `CrosschainERC20Factory`.
+
+---
+
+For tokens that have not yet been deployed and need to be compatible with both ERC7281 and ERC7802, we recommend implementing CrosschainERC20 from scratch.
+
+The flow starts with the `deployCrosschainERC20()` function.
+
 #### Deploy and Setup CrosschainERC20
 
-Deploys a new `CrosschainERC20` token and sets the owner. Bridges limits can be set on the `deployCrosschainERC20()` function or after the deployment by the owner.
+Deploys a new `CrosschainERC20` token and sets the owner. Bridges limits can be set on the `deployCrosschainERC20()` function or after the deployment by the owner using the `setLimits()` function.
 
 ```mermaid
 sequenceDiagram
@@ -56,6 +64,12 @@ sequenceDiagram
     A ->> B2: receiveToken()
     B2 ->> C: crosschainMint()
 ```
+
+---
+
+For tokens that are already deployed and cannot be upgraded, we propose using a Lockbox mechanism.
+
+The flow starts with the `deployCrosschainERC20WithLockbox()` function.
 
 #### Deploy and setup CrosschainERC20Lockbox
 
@@ -100,6 +114,12 @@ sequenceDiagram
     L ->> E: transfer(Alice, amount)
     L ->> C: burn(Alice)
 ```
+
+---
+
+For tokens that are already deployed as xERC20 and cannot be upgraded to implement ERC-7802, we propose using an adapter.
+
+The flow starts with the `deployERC7802Adapter()` function.
 
 #### Deploy and setup ERC7802Adapter
 

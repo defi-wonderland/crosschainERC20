@@ -28,7 +28,8 @@
   "lint-staged": {
     "*.{js,css,md,ts,sol}": "forge fmt",
     "(src|test|script)/**/*.sol": "yarn lint:sol",
-    "package.json": "sort-package-json"
+    "package.json": "sort-package-json",
+    "!(invariants)/**/*.sol": "yarn lint:sol"
   },
   "devDependencies": {
     "@commitlint/cli": "19.3.0",

@@ -1,0 +1,61 @@
+{
+  "slither": {
+    "useSlither": true,
+    "cachePath": "slither_results.json",
+    "args": ["--foundry-out-directory", "out"]
+  },
+  "fuzzing": {
+    "workers": 10,
+    "workerResetLimit": 50,
+    "timeout": 0,
+    "testLimit": 0,
+    "shrinkLimit": 5000,
+    "callSequenceLength": 50,
+    "corpusDirectory": "test/invariants/corpus",
+    "coverageEnabled": true,
+    "coverageFormats": ["html", "lcov"],
+    "targetContracts": ["FuzzTest"],
+    "deployerAddress": "0x30000",
+    "senderAddresses": ["0x10000"],
+    "blockNumberDelayMax": 60480,
+    "blockTimestampDelayMax": 604800,
+    "blockGasLimit": 125000000,
+    "transactionGasLimit": 12500000,
+    "testing": {
+      "stopOnFailedTest": false,
+      "stopOnFailedContractMatching": false,
+      "stopOnNoTests": true,
+      "testAllContracts": false,
+      "traceAll": true,
+      "assertionTesting": {
+        "enabled": true,
+        "testViewMethods": false,
+        "panicCodeConfig": {
+          "failOnAssertion": true
+        }
+      }
+    },
+    "chainConfig": {
+      "codeSizeCheckDisabled": true,
+      "cheatCodes": {
+        "cheatCodesEnabled": true,
+        "enableFFI": false
+      },
+      "skipAccountChecks": true
+    }
+  },
+  "compilation": {
+    "platform": "crytic-compile",
+    "platformConfig": {
+      "target": ".",
+      "solcVersion": "",
+      "exportDirectory": "",
+      "args": ["--foundry-compile-all", "--foundry-out-directory", "out"]
+    }
+  },
+  "logging": {
+    "level": "info",
+    "logDirectory": "",
+    "noColor": false
+  }
+}

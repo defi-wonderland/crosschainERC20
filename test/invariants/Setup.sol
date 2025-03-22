@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {vm} from './VM.sol';
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
+import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {console} from 'forge-std/console.sol';
 import {CrosschainERC20Factory} from 'src/contracts/CrosschainERC20Factory.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
@@ -16,16 +17,41 @@ contract Setup {
 
   //Contracts
   CrosschainERC20Factory public factory;
-  ICrosschainERC20[] public crosschainERC20s;
-  XERC20 public xerc20;
+  ICrosschainERC20 public crosschainERC20;
+  MockXERC20 public xerc20;
   IERC7802Adapter public adapters;
+  XERC20Lockbox public lockbox;
 
   constructor() {
-    xerc20 = new XERC20('Test', 'TEST', 18, _OWNER);
+    // Deploy the mock XERC20 to use with lockbox and adapter.
+    xerc20 = new MockXERC20(_OWNER);
+    // Deploy factory to deploy the CrosschainERC20, Lockbox and Adapter.
     factory = new CrosschainERC20Factory();
+    // Deal 1000e18 to the user to use as liquidity.
+    vm.prank(_OWNER);
+    xerc20.deal(_USER, 1000e18);
+
+    uint256[] memory _minterLimits = new uint256[](1);
+    uint256[] memory _burnerLimits = new uint256[](1);
+    address[] memory _bridges = new address[](1);
+
+    (address _crosschainERC20, address _lockbox) = factory.deployCrosschainERC20WithLockbox(
+      'Test', 'TEST', 18, _minterLimits, _burnerLimits, _bridges, _OWNER, address(xerc20)
+    );
+
+    crosschainERC20 = ICrosschainERC20(_crosschainERC20);
+    adapters = IERC7802Adapter(_lockbox);
   }
 
   function makeAddr(string memory name) internal returns (address) {
     return vm.addr(uint256(keccak256(abi.encodePacked(name))));
+  }
+}
+
+contract MockXERC20 is XERC20 {
+  constructor(address factory) XERC20('Test', 'TEST', 18, factory) {}
+
+  function deal(address to, uint256 amount) external onlyOwner {
+    _mint(to, amount);
   }
 }

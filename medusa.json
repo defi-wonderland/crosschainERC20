@@ -29,7 +29,6 @@
       "traceAll": true,
       "assertionTesting": {
         "enabled": true,
-        "testViewMethods": false,
         "panicCodeConfig": {
           "failOnAssertion": true
         }

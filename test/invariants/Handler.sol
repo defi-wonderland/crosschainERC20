@@ -10,7 +10,7 @@ import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
 contract Handler is Setup {
   /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-  /*          CrosschainERC20 and XERC20 HANDLERS               */
+  /*                 CrosschainERC20 HANDLERS                   */
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
   function handler_crosschainERC20_crosschainMint(uint256 _amount) public {
@@ -20,7 +20,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _BRIDGE) < _amount // InsufficientAllowance()
-          || IXERC20(address(crosschainERC20)).mintingMaxLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
+          || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
       );
     }
@@ -110,12 +110,36 @@ contract Handler is Setup {
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
   function handler_lockbox_deposit(uint256 _amount) public {
+    _amount = clampGt(_amount, 0);
+
     vm.prank(_USER);
-    lockbox.deposit(_amount);
+    IERC20(address(xerc20)).approve(address(lockbox), _amount);
+
+    vm.prank(_USER);
+    try lockbox.deposit(_amount) {
+      assert(false);
+    } catch {
+      assertWithMsg(
+        IERC20(address(xerc20)).balanceOf(_USER) < _amount, // InsufficientBalance()
+        'revert not expected'
+      );
+    }
   }
 
   function handler_lockbox_withdraw(uint256 _amount) public {
+    _amount = clampGt(_amount, 0);
+
     vm.prank(_USER);
-    lockbox.withdraw(_amount);
+    IERC20(address(crosschainERC20)).approve(address(lockbox), _amount);
+
+    vm.prank(_USER);
+    try lockbox.withdraw(_amount) {}
+    catch {
+      assertWithMsg(
+        IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount // InsufficientBalance()
+          || IERC20(address(xerc20)).balanceOf(address(lockbox)) < _amount, // InsufficientBalance()
+        'revert not expected'
+      );
+    }
   }
 }

@@ -23,10 +23,10 @@ contract FuzzTest is Handler {
     bytes32 _salt = keccak256(abi.encodePacked(_name, _symbol, _decimals, msg.sender));
 
     try factory.deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _OWNER) {
-      _saltUsed[_salt] = true;
-      _paramsUsed[_name][_symbol][_decimals] = true;
+      ghost_saltUsed[_salt] = true;
+      ghost_paramsUsed[_name][_symbol][_decimals] = true;
     } catch {
-      assert(_paramsUsed[_name][_symbol][_decimals]);
+      assert(ghost_paramsUsed[_name][_symbol][_decimals]);
     }
   }
 
@@ -47,15 +47,18 @@ contract FuzzTest is Handler {
     try factory.deployCrosschainERC20WithLockbox(
       _name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _OWNER, address(xerc20)
     ) {
-      _saltUsed[_salt] = true;
-      _paramsUsed[_name][_symbol][_decimals] = true;
+      ghost_saltUsed[_salt] = true;
+      ghost_paramsUsed[_name][_symbol][_decimals] = true;
     } catch {
-      assert(_paramsUsed[_name][_symbol][_decimals]);
+      assert(ghost_paramsUsed[_name][_symbol][_decimals]);
     }
   }
 
   /// @notice CrosschainERC20 total supply is the same as the XERC20 locked in the lockbox.
   function property_totalSupplyIsSameAsXERC20LockedInLockbox() public view {
-    assert(IERC20(address(crosschainERC20)).totalSupply() == IERC20(address(xerc20)).balanceOf(address(lockbox)));
+    assert(
+      IERC20(address(crosschainERC20)).totalSupply() - ghost_nonLockboxSupply
+        == IERC20(address(xerc20)).balanceOf(address(lockbox))
+    );
   }
 }

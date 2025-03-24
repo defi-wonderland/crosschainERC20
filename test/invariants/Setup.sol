@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import {GhostVariables} from './GhostVariables.sol';
+import {PropertiesAsserts} from './PropertiesAsserts.sol';
 import {vm} from './VM.sol';
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
 import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
@@ -9,7 +11,7 @@ import {CrosschainERC20Factory} from 'src/contracts/CrosschainERC20Factory.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 import {IERC7802Adapter} from 'src/interfaces/IERC7802Adapter.sol';
 
-contract Setup {
+contract Setup is PropertiesAsserts, GhostVariables {
   //Actors
   address internal immutable _OWNER = makeAddr('Owner');
   address internal immutable _USER = makeAddr('User');
@@ -35,12 +37,16 @@ contract Setup {
     uint256[] memory _burnerLimits = new uint256[](1);
     address[] memory _bridges = new address[](1);
 
+    _minterLimits[0] = 1000e18;
+    _burnerLimits[0] = 1000e18;
+    _bridges[0] = _BRIDGE;
+
     (address _crosschainERC20, address _lockbox) = factory.deployCrosschainERC20WithLockbox(
       'Test', 'TEST', 18, _minterLimits, _burnerLimits, _bridges, _OWNER, address(xerc20)
     );
 
     crosschainERC20 = ICrosschainERC20(_crosschainERC20);
-    adapters = IERC7802Adapter(_lockbox);
+    lockbox = XERC20Lockbox(payable(_lockbox));
   }
 
   function makeAddr(string memory name) internal returns (address) {

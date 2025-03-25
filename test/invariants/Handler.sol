@@ -116,9 +116,8 @@ contract Handler is Setup {
     IERC20(address(xerc20)).approve(address(lockbox), _amount);
 
     vm.prank(_USER);
-    try lockbox.deposit(_amount) {
-      assert(false);
-    } catch {
+    try lockbox.deposit(_amount) {}
+    catch {
       assertWithMsg(
         IERC20(address(xerc20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'

@@ -109,14 +109,14 @@ contract Handler is Setup {
   /*                      LOCKBOX HANDLERS                      */
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-  function handler_lockbox_deposit(uint256 _amount) public {
+  function handler_lockbox_depositTo(uint256 _amount, address _to) public {
     _amount = clampGt(_amount, 0);
 
     vm.prank(_USER);
     IERC20(address(xerc20)).approve(address(lockbox), _amount);
 
     vm.prank(_USER);
-    try lockbox.deposit(_amount) {}
+    try lockbox.depositTo(_to, _amount) {}
     catch {
       assertWithMsg(
         IERC20(address(xerc20)).balanceOf(_USER) < _amount, // InsufficientBalance()
@@ -125,14 +125,14 @@ contract Handler is Setup {
     }
   }
 
-  function handler_lockbox_withdraw(uint256 _amount) public {
+  function handler_lockbox_withdrawTo(uint256 _amount, address _to) public {
     _amount = clampGt(_amount, 0);
 
     vm.prank(_USER);
     IERC20(address(crosschainERC20)).approve(address(lockbox), _amount);
 
     vm.prank(_USER);
-    try lockbox.withdraw(_amount) {}
+    try lockbox.withdrawTo(_to, _amount) {}
     catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount // InsufficientBalance()

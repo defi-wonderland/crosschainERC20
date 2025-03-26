@@ -105,6 +105,15 @@ contract Handler is Setup {
     }
   }
 
+  function handler_crosschainERC20_setLimits(uint256 _minterLimit, uint256 _burnerLimit) public {
+    _minterLimit = clampGt(_minterLimit, type(uint256).max >> 1);
+    _burnerLimit = clampGt(_burnerLimit, type(uint256).max >> 1);
+    vm.prank(_OWNER);
+    try crosschainERC20.setLimits(_BRIDGE, _minterLimit, _burnerLimit) {
+      assert(false);
+    } catch {}
+  }
+
   /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
   /*                      LOCKBOX HANDLERS                      */
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/

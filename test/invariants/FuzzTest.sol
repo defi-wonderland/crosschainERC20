@@ -30,7 +30,12 @@ contract FuzzTest is Handler {
     }
   }
 
-  function property_cantReuseSameParamsWithLockbox(string memory _name, string memory _symbol, uint8 _decimals) public {
+  function property_cantReuseSameParamsWithLockbox(
+    string memory _name,
+    string memory _symbol,
+    uint8 _decimals,
+    address _baseToken
+  ) public {
     require(bytes(_name).length < 100, 'Name too long');
     require(bytes(_symbol).length < 100, 'Symbol too long');
 
@@ -45,7 +50,7 @@ contract FuzzTest is Handler {
     bytes32 _salt = keccak256(abi.encodePacked(_name, _symbol, _decimals, msg.sender));
 
     try factory.deployCrosschainERC20WithLockbox(
-      _name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _OWNER, address(xerc20)
+      _name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _baseToken, _OWNER
     ) {
       ghost_saltUsed[_salt] = true;
       ghost_paramsUsed[_name][_symbol][_decimals] = true;

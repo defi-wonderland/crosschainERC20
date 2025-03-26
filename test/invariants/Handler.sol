@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Setup} from './Setup.sol';
-import {vm} from './VM.sol';
+import {vm} from './utils/VM.sol';
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';

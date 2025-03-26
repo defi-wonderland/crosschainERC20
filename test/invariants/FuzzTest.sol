@@ -6,7 +6,9 @@ import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
 contract FuzzTest is Handler {
-  /// @notice Fuzz test for the property that the factory cannot deploy a CrosschainERC20 with the same params.
+  /// @custom:property-id 1
+  /// @notice Is not possible to deploy a CrosschainERC20 with the same name, symbol and decimals as an already
+  /// deployed one using the same msg.sender.
   function property_cantReuseSameParams(string memory _name, string memory _symbol, uint8 _decimals) public {
     // solhint-disable-next-line custom-errors
     require(bytes(_name).length < 100, 'Name too long');
@@ -31,6 +33,9 @@ contract FuzzTest is Handler {
     }
   }
 
+  /// @custom:property-id 1
+  /// @notice Is not possible to deploy a CrosschainERC20 with the same name, symbol and decimals as an already
+  /// deployed one using the same msg.sender.
   function property_cantReuseSameParamsWithLockbox(
     string memory _name,
     string memory _symbol,
@@ -62,7 +67,8 @@ contract FuzzTest is Handler {
     }
   }
 
-  /// @notice CrosschainERC20 total supply is the same as the XERC20 locked in the lockbox.
+  /// @custom:property-id 2
+  /// @notice  The total supply of the CrosschainERC20 is the same as the ERC20 locked in the lockbox.
   function property_totalSupplyIsSameAsXERC20LockedInLockbox() public view {
     assert(
       IERC20(address(crosschainERC20)).totalSupply() - ghost_nonLockboxSupply

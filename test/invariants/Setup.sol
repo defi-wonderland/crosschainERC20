@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {GhostVariables} from './GhostVariables.sol';
-import {PropertiesAsserts} from './PropertiesAsserts.sol';
-import {vm} from './VM.sol';
+import {PropertiesAsserts} from './utils/PropertiesAsserts.sol';
+import {vm} from './utils/VM.sol';
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
 import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {CrosschainERC20Factory} from 'src/contracts/CrosschainERC20Factory.sol';

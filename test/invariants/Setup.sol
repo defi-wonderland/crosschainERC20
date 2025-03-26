@@ -21,7 +21,7 @@ contract Setup is PropertiesAsserts, GhostVariables {
   CrosschainERC20Factory public factory;
   ICrosschainERC20 public crosschainERC20;
   MockXERC20 public xerc20;
-  IERC7802Adapter public adapters;
+  IERC7802Adapter public adapter;
   XERC20Lockbox public lockbox;
 
   constructor() {
@@ -47,6 +47,11 @@ contract Setup is PropertiesAsserts, GhostVariables {
 
     crosschainERC20 = ICrosschainERC20(_crosschainERC20);
     lockbox = XERC20Lockbox(payable(_lockbox));
+
+    adapter = IERC7802Adapter(factory.deployERC7802Adapter(address(xerc20), _BRIDGE));
+
+    vm.prank(_OWNER);
+    xerc20.setLimits(address(adapter), 1000e18, 1000e18);
   }
 
   function makeAddr(string memory name) internal returns (address) {

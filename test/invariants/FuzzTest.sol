@@ -58,7 +58,7 @@ contract FuzzTest is Handler {
   function property_totalSupplyIsSameAsXERC20LockedInLockbox() public view {
     assert(
       IERC20(address(crosschainERC20)).totalSupply() - ghost_nonLockboxSupply
-        == IERC20(address(xerc20)).balanceOf(address(lockbox))
+        == IERC20(address(xerc20)).balanceOf(address(lockbox)) - ghost_lockboxSelfTransfer
     );
   }
 }

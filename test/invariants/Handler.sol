@@ -132,11 +132,44 @@ contract Handler is Setup {
     IERC20(address(crosschainERC20)).approve(address(lockbox), _amount);
 
     vm.prank(_USER);
-    try lockbox.withdrawTo(_to, _amount) {}
-    catch {
+    try lockbox.withdrawTo(_to, _amount) {
+      if (_to == address(lockbox)) {
+        ghost_lockboxSelfTransfer += _amount;
+      }
+    } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount // InsufficientBalance()
           || IERC20(address(xerc20)).balanceOf(address(lockbox)) < _amount, // InsufficientBalance()
+        'revert not expected'
+      );
+    }
+  }
+
+  /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+  /*                      Adapter HANDLERS                      */
+  /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+  function handler_adapter_crosschainMint(uint256 _amount) public {
+    vm.prank(_BRIDGE);
+    try adapter.crosschainMint(_USER, _amount) {}
+    catch {
+      assertWithMsg(
+        IXERC20(address(crosschainERC20)).mintingMaxLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
+        'revert not expected'
+      );
+    }
+  }
+
+  function handler_adapter_crosschainBurn(uint256 _amount) public {
+    vm.prank(_USER);
+    IERC20(address(xerc20)).approve(address(adapter), _amount);
+
+    vm.prank(_BRIDGE);
+    try adapter.crosschainBurn(_USER, _amount) {}
+    catch {
+      assertWithMsg(
+        IXERC20(address(crosschainERC20)).burningCurrentLimitOf(_BRIDGE) < _amount // IXERC20_NotHighEnoughLimits()
+          || IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'
       );
     }

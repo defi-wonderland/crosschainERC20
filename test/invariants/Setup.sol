@@ -6,7 +6,6 @@ import {PropertiesAsserts} from './PropertiesAsserts.sol';
 import {vm} from './VM.sol';
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
 import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
-import {console} from 'forge-std/console.sol';
 import {CrosschainERC20Factory} from 'src/contracts/CrosschainERC20Factory.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 import {IERC7802Adapter} from 'src/interfaces/IERC7802Adapter.sol';

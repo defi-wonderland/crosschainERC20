@@ -2,14 +2,15 @@
 pragma solidity ^0.8.0;
 
 import {Handler} from './Handler.sol';
-import {console} from 'forge-std/console.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
 contract FuzzTest is Handler {
   /// @notice Fuzz test for the property that the factory cannot deploy a CrosschainERC20 with the same params.
   function property_cantReuseSameParams(string memory _name, string memory _symbol, uint8 _decimals) public {
+    // solhint-disable-next-line custom-errors
     require(bytes(_name).length < 100, 'Name too long');
+    // solhint-disable-next-line custom-errors
     require(bytes(_symbol).length < 100, 'Symbol too long');
 
     uint256[] memory _minterLimits = new uint256[](1);
@@ -36,7 +37,9 @@ contract FuzzTest is Handler {
     uint8 _decimals,
     address _baseToken
   ) public {
+    // solhint-disable-next-line custom-errors
     require(bytes(_name).length < 100, 'Name too long');
+    // solhint-disable-next-line custom-errors
     require(bytes(_symbol).length < 100, 'Symbol too long');
 
     uint256[] memory _minterLimits = new uint256[](1);

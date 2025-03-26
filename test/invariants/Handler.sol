@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import {Setup} from './Setup.sol';
 import {vm} from './VM.sol';
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
-import {console} from 'forge-std/console.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
@@ -72,6 +71,7 @@ contract Handler is Setup {
   }
 
   function handler_crosschainERC20_crosschainMint(address _caller, uint256 _amount) public {
+    // solhint-disable-next-line custom-errors
     require(_caller != _BRIDGE && _caller != address(lockbox) && _caller != address(0), 'invalid caller');
 
     _amount = clampGt(_amount, 0);
@@ -89,6 +89,7 @@ contract Handler is Setup {
   }
 
   function handler_crosschainERC20_crosschainBurn(address _caller, uint256 _amount) public {
+    // solhint-disable-next-line custom-errors
     require(_caller != _BRIDGE && _caller != address(lockbox) && _caller != address(0), 'invalid caller');
 
     _amount = clampGt(_amount, 0);

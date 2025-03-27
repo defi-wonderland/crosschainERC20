@@ -33,4 +33,5 @@ This testing campaign aims to verify the correctness and security of the Crossch
 | Id  | Milestone       | Description                                                                                                                               | Tested |
 | --- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | 1   | Factory         | Is not possible to deploy a CrosschainERC20 with the same name, symbol and decimals as an already deployed one using the same msg.sender. | [X]    |
-| 2   | CrosschainERC20 | The total supply of the CrosschainERC20 is the same as the ERC20 locked in the lockbox.                                                   | [ ]    |
+| 2   | CrosschainERC20 | The total supply of the CrosschainERC20 is the same as the ERC20 locked in the lockbox.                                                   | [X]    |
+| 3   | CrosschainERC20 | The bridge limits cannot be set to a value greater than the max allowed.                                                                  | [X]    |

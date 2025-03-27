@@ -13,12 +13,16 @@ contract Handler is Setup {
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
   function handler_crosschainERC20_crosschainMint(uint256 _amount) public {
+    uint256 _userBalanceBefore = IERC20(address(crosschainERC20)).balanceOf(_USER);
+
     vm.prank(_BRIDGE);
     try crosschainERC20.crosschainMint(_USER, _amount) {
+      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) + _amount, 'Unexpected Balance');
       ghost_nonLockboxSupply += _amount;
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _BRIDGE) < _amount // InsufficientAllowance()
+          || IERC20(address(crosschainERC20)).totalSupply() > type(uint256).max - _amount // TotalSupplyOverflow()
           || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
       );
@@ -26,11 +30,14 @@ contract Handler is Setup {
   }
 
   function handler_crosschainERC20_crosschainBurn(uint256 _amount) public {
+    uint256 _userBalanceBefore = IERC20(address(crosschainERC20)).balanceOf(_USER);
+
     vm.prank(_USER);
     IERC20(address(crosschainERC20)).approve(_BRIDGE, _amount);
 
     vm.prank(_BRIDGE);
     try crosschainERC20.crosschainBurn(_USER, _amount) {
+      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) - _amount, 'Unexpected Balance');
       ghost_nonLockboxSupply -= _amount;
     } catch {
       assertWithMsg(
@@ -42,24 +49,31 @@ contract Handler is Setup {
   }
 
   function handler_crosschainERC20_mint(uint256 _amount) public {
+    uint256 _userBalanceBefore = IERC20(address(crosschainERC20)).balanceOf(_USER);
+
     vm.prank(_BRIDGE);
     try crosschainERC20.mint(_USER, _amount) {
+      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) + _amount, 'Unexpected Balance');
       ghost_nonLockboxSupply += _amount;
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _BRIDGE) < _amount // InsufficientAllowance()
-          || IXERC20(address(crosschainERC20)).mintingMaxLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
+          || IERC20(address(crosschainERC20)).totalSupply() > type(uint256).max - _amount // TotalSupplyOverflow()
+          || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
       );
     }
   }
 
   function handler_crosschainERC20_burn(uint256 _amount) public {
+    uint256 _userBalanceBefore = IERC20(address(crosschainERC20)).balanceOf(_USER);
+
     vm.prank(_USER);
     IERC20(address(crosschainERC20)).approve(_BRIDGE, _amount);
 
     vm.prank(_BRIDGE);
     try crosschainERC20.burn(_USER, _amount) {
+      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) - _amount, 'Unexpected Balance');
       ghost_nonLockboxSupply -= _amount;
     } catch {
       assertWithMsg(
@@ -82,7 +96,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _caller) < _amount // InsufficientAllowance()
-          || IXERC20(address(crosschainERC20)).mintingMaxLimitOf(_caller) < _amount, // IXERC20_NotHighEnoughLimits()
+          || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_caller) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
       );
     }
@@ -107,12 +121,18 @@ contract Handler is Setup {
   }
 
   function handler_crosschainERC20_setLimits(uint256 _minterLimit, uint256 _burnerLimit) public {
-    _minterLimit = clampGt(_minterLimit, type(uint256).max >> 1);
-    _burnerLimit = clampGt(_burnerLimit, type(uint256).max >> 1);
     vm.prank(_OWNER);
     try crosschainERC20.setLimits(_BRIDGE, _minterLimit, _burnerLimit) {
-      assert(false);
-    } catch {}
+      assert(
+        crosschainERC20.mintingMaxLimitOf(_BRIDGE) == _minterLimit
+          && crosschainERC20.burningMaxLimitOf(_BRIDGE) == _burnerLimit
+      );
+    } catch {
+      assertWithMsg(
+        _minterLimit > type(uint256).max >> 1 || _burnerLimit > type(uint256).max >> 1, // IXERC20_LimitsTooHigh()
+        'revert not expected'
+      );
+    }
   }
 
   /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -164,7 +184,7 @@ contract Handler is Setup {
     try adapter.crosschainMint(_USER, _amount) {}
     catch {
       assertWithMsg(
-        IXERC20(address(crosschainERC20)).mintingMaxLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
+        xerc20.mintingCurrentLimitOf(address(adapter)) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
       );
     }
@@ -178,8 +198,8 @@ contract Handler is Setup {
     try adapter.crosschainBurn(_USER, _amount) {}
     catch {
       assertWithMsg(
-        IXERC20(address(crosschainERC20)).burningCurrentLimitOf(_BRIDGE) < _amount // IXERC20_NotHighEnoughLimits()
-          || IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount, // InsufficientBalance()
+        xerc20.burningCurrentLimitOf(address(adapter)) < _amount // IXERC20_NotHighEnoughLimits()
+          || IERC20(address(xerc20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'
       );
     }

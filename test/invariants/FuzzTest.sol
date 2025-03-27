@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {Handler} from './Handler.sol';
+import {vm} from './utils/VM.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
@@ -73,6 +74,15 @@ contract FuzzTest is Handler {
     assert(
       IERC20(address(crosschainERC20)).totalSupply() - ghost_nonLockboxSupply
         == IERC20(address(xerc20)).balanceOf(address(lockbox)) - ghost_lockboxSelfTransfer
+    );
+  }
+
+  /// @custom:property-id 3
+  /// @notice The bridge cannot set the limits to a value greater than the max allowed.
+  function property_bridgeLimitsCannotBeGreaterThanMaxAllowed() public view {
+    assert(
+      crosschainERC20.mintingMaxLimitOf(_BRIDGE) < type(uint256).max >> 1
+        && crosschainERC20.burningMaxLimitOf(_BRIDGE) < type(uint256).max >> 1
     );
   }
 }

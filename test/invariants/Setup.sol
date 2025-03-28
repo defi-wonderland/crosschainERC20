@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.25;
 
 import {GhostVariables} from './GhostVariables.sol';
 import {PropertiesAsserts} from './utils/PropertiesAsserts.sol';

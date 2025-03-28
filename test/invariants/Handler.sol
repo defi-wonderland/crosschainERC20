@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.25;
 
 import {Setup} from './Setup.sol';
 import {vm} from './utils/VM.sol';
@@ -17,7 +17,7 @@ contract Handler is Setup {
 
     vm.prank(_BRIDGE);
     try crosschainERC20.crosschainMint(_USER, _amount) {
-      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) + _amount, 'Unexpected Balance');
+      assertEq(_userBalanceBefore + _amount, IERC20(address(crosschainERC20)).balanceOf(_USER), 'Unexpected Balance');
       ghost_nonLockboxSupply += _amount;
     } catch {
       assertWithMsg(
@@ -37,7 +37,7 @@ contract Handler is Setup {
 
     vm.prank(_BRIDGE);
     try crosschainERC20.crosschainBurn(_USER, _amount) {
-      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) - _amount, 'Unexpected Balance');
+      assertEq(_userBalanceBefore - _amount, IERC20(address(crosschainERC20)).balanceOf(_USER), 'Unexpected Balance');
       ghost_nonLockboxSupply -= _amount;
     } catch {
       assertWithMsg(
@@ -53,7 +53,7 @@ contract Handler is Setup {
 
     vm.prank(_BRIDGE);
     try crosschainERC20.mint(_USER, _amount) {
-      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) + _amount, 'Unexpected Balance');
+      assertEq(_userBalanceBefore + _amount, IERC20(address(crosschainERC20)).balanceOf(_USER), 'Unexpected Balance');
       ghost_nonLockboxSupply += _amount;
     } catch {
       assertWithMsg(
@@ -73,7 +73,7 @@ contract Handler is Setup {
 
     vm.prank(_BRIDGE);
     try crosschainERC20.burn(_USER, _amount) {
-      assertEq(_userBalanceBefore, IERC20(address(crosschainERC20)).balanceOf(_USER) - _amount, 'Unexpected Balance');
+      assertEq(_userBalanceBefore - _amount, IERC20(address(crosschainERC20)).balanceOf(_USER), 'Unexpected Balance');
       ghost_nonLockboxSupply -= _amount;
     } catch {
       assertWithMsg(
@@ -84,7 +84,7 @@ contract Handler is Setup {
     }
   }
 
-  function handler_crosschainERC20_crosschainMint(address _caller, uint256 _amount) public {
+  function handler_crosschainERC20_crosschainMintRevert(address _caller, uint256 _amount) public {
     // solhint-disable-next-line custom-errors
     require(_caller != _BRIDGE && _caller != address(lockbox) && _caller != address(0), 'invalid caller');
 
@@ -102,7 +102,7 @@ contract Handler is Setup {
     }
   }
 
-  function handler_crosschainERC20_crosschainBurn(address _caller, uint256 _amount) public {
+  function handler_crosschainERC20_crosschainBurnRevert(address _caller, uint256 _amount) public {
     // solhint-disable-next-line custom-errors
     require(_caller != _BRIDGE && _caller != address(lockbox) && _caller != address(0), 'invalid caller');
 

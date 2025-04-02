@@ -10,11 +10,11 @@ import {IERC7802} from 'interfaces/external/IERC7802.sol';
 interface IERC7802Adapter is IERC7802 {
   /// @notice Thrown when the caller is not the bridge.
   error Unauthorized();
+
   /**
    * @notice Returns the xERC20 contract.
    * @return _xerc20 The xERC20 contract.
    */
-
   function XERC20() external view returns (IXERC20 _xerc20);
 
   /**

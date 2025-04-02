@@ -9,6 +9,36 @@ import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
 contract Handler is Setup {
   /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+  /*            CrosschainERC20FActory HANDLERS                 */
+  /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+  function handler_factory_deployCrosschainERC20WithLockbox(
+    string memory _name,
+    string memory _symbol,
+    uint8 _decimals,
+    address _baseToken,
+    address _caller
+  ) public {
+    // solhint-disable-next-line custom-errors
+    require(bytes(_name).length < 100, 'Name too long');
+    // solhint-disable-next-line custom-errors
+    require(bytes(_symbol).length < 100, 'Symbol too long');
+
+    uint256[] memory _minterLimits = new uint256[](1);
+    uint256[] memory _burnerLimits = new uint256[](1);
+    address[] memory _bridges = new address[](1);
+
+    bytes32 _salt = keccak256(abi.encodePacked(_name, _symbol, _decimals, msg.sender));
+
+    vm.prank(_caller);
+    try factory.deployCrosschainERC20WithLockbox(
+      _name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _baseToken, _OWNER
+    ) {
+      ghost_paramsUsed[_name][_symbol][_decimals] = true;
+      ghost_saltUsed[_salt] = msg.sender;
+    } catch {}
+  }
+
+  /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
   /*                 CrosschainERC20 HANDLERS                   */
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
@@ -22,6 +52,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _BRIDGE) < _amount // InsufficientAllowance()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(crosschainERC20)).totalSupply() > type(uint256).max - _amount // TotalSupplyOverflow()
           || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
@@ -42,6 +73,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IXERC20(address(crosschainERC20)).burningCurrentLimitOf(_BRIDGE) < _amount // IXERC20_NotHighEnoughLimits()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'
       );
@@ -58,6 +90,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _BRIDGE) < _amount // InsufficientAllowance()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(crosschainERC20)).totalSupply() > type(uint256).max - _amount // TotalSupplyOverflow()
           || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_BRIDGE) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
@@ -78,6 +111,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IXERC20(address(crosschainERC20)).burningCurrentLimitOf(_BRIDGE) < _amount // IXERC20_NotHighEnoughLimits()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'
       );
@@ -88,14 +122,13 @@ contract Handler is Setup {
     // solhint-disable-next-line custom-errors
     require(_caller != _BRIDGE && _caller != address(lockbox) && _caller != address(0), 'invalid caller');
 
-    _amount = clampGt(_amount, 0);
-
     vm.prank(_caller);
     try crosschainERC20.crosschainMint(_USER, _amount) {
       assert(false);
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).allowance(_USER, _caller) < _amount // InsufficientAllowance()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IXERC20(address(crosschainERC20)).mintingCurrentLimitOf(_caller) < _amount, // IXERC20_NotHighEnoughLimits()
         'revert not expected'
       );
@@ -106,14 +139,13 @@ contract Handler is Setup {
     // solhint-disable-next-line custom-errors
     require(_caller != _BRIDGE && _caller != address(lockbox) && _caller != address(0), 'invalid caller');
 
-    _amount = clampGt(_amount, 0);
-
     vm.prank(_caller);
     try crosschainERC20.crosschainBurn(_USER, _amount) {
       assert(false);
     } catch {
       assertWithMsg(
         IXERC20(address(crosschainERC20)).burningCurrentLimitOf(_caller) < _amount // IXERC20_NotHighEnoughLimits()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'
       );
@@ -140,8 +172,6 @@ contract Handler is Setup {
   /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
   function handler_lockbox_depositTo(uint256 _amount, address _to) public {
-    _amount = clampGt(_amount, 0);
-
     vm.prank(_USER);
     IERC20(address(xerc20)).approve(address(lockbox), _amount);
 
@@ -149,15 +179,14 @@ contract Handler is Setup {
     try lockbox.depositTo(_to, _amount) {}
     catch {
       assertWithMsg(
-        IERC20(address(xerc20)).balanceOf(_USER) < _amount, // InsufficientBalance()
+        IERC20(address(xerc20)).balanceOf(_USER) < _amount // InsufficientBalance()
+          || _amount == 0, // IXERC20_ZeroAmount()
         'revert not expected'
       );
     }
   }
 
   function handler_lockbox_withdrawTo(uint256 _amount, address _to) public {
-    _amount = clampGt(_amount, 0);
-
     vm.prank(_USER);
     IERC20(address(crosschainERC20)).approve(address(lockbox), _amount);
 
@@ -169,6 +198,7 @@ contract Handler is Setup {
     } catch {
       assertWithMsg(
         IERC20(address(crosschainERC20)).balanceOf(_USER) < _amount // InsufficientBalance()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(xerc20)).balanceOf(address(lockbox)) < _amount, // InsufficientBalance()
         'revert not expected'
       );
@@ -184,7 +214,8 @@ contract Handler is Setup {
     try adapter.crosschainMint(_USER, _amount) {}
     catch {
       assertWithMsg(
-        xerc20.mintingCurrentLimitOf(address(adapter)) < _amount, // IXERC20_NotHighEnoughLimits()
+        xerc20.mintingCurrentLimitOf(address(adapter)) < _amount // IXERC20_NotHighEnoughLimits()
+          || _amount == 0, // IXERC20_ZeroAmount()
         'revert not expected'
       );
     }
@@ -199,6 +230,7 @@ contract Handler is Setup {
     catch {
       assertWithMsg(
         xerc20.burningCurrentLimitOf(address(adapter)) < _amount // IXERC20_NotHighEnoughLimits()
+          || _amount == 0 // IXERC20_ZeroAmount()
           || IERC20(address(xerc20)).balanceOf(_USER) < _amount, // InsufficientBalance()
         'revert not expected'
       );

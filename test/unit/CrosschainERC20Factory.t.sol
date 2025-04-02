@@ -10,6 +10,7 @@ import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 import {CrosschainERC20Factory} from 'contracts/CrosschainERC20Factory.sol';
 import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
+import {ERC20} from 'solady/tokens/ERC20.sol';
 
 // Interfaces
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
@@ -158,6 +159,9 @@ contract UnitCrosschainERC20Factory is Test {
     address _crosschainERC20Lockbox;
     address _baseToken = address(makeAddr('ERC20'));
 
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
     // Deploy the CrosschainERC20 with Lockbox
     (_crosschainERC20, _crosschainERC20Lockbox) = _factory.deployCrosschainERC20WithLockbox(
       _name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
@@ -170,7 +174,7 @@ contract UnitCrosschainERC20Factory is Test {
     assertGt(_crosschainERC20Lockbox.code.length, 0);
 
     // Assert the Base Token is set
-    assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).ERC20()), _baseToken);
+    assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).BASE_TOKEN()), _baseToken);
 
     // Assert the CrosschainERC20 is set
     assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).XERC20()), _crosschainERC20);
@@ -192,6 +196,9 @@ contract UnitCrosschainERC20Factory is Test {
     address _crosschainERC20;
     address _crosschainERC20Lockbox;
     address _baseToken = address(makeAddr('ERC20'));
+
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
 
     // Deploy the CrosschainERC20 with Lockbox
     (_crosschainERC20, _crosschainERC20Lockbox) = _factory.deployCrosschainERC20WithLockbox(

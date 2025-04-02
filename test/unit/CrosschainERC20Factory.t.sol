@@ -144,6 +144,32 @@ contract UnitCrosschainERC20Factory is Test {
     assertEq(CrosschainERC20(_crosschainERC20).owner(), _owner);
   }
 
+  /// @notice Test that the deployCrosschainERC20WithLockbox function reverts when the base token is the zero address.
+  function test_DeployCrosschainERC20WithLockboxRevertsWhenBaseTokenIsZeroAddress(
+    uint256 _minterLimit,
+    uint256 _burnerLimit
+  ) public {
+    // Bound limits in allowed range
+    _minterLimit = bound(_minterLimit, 1, type(uint256).max >> 1);
+    _burnerLimit = bound(_burnerLimit, 1, type(uint256).max >> 1);
+
+    // Get the bridges with limits
+    (address[] memory _bridges, uint256[] memory _minterLimits, uint256[] memory _burnerLimits) =
+      _getBridgesWithLimits(_minterLimit, _burnerLimit);
+
+    // Declare contract addresses
+    address _crosschainERC20;
+    address _crosschainERC20Lockbox;
+    address _baseToken = address(0);
+
+    vm.expectRevert(ICrosschainERC20Factory.ICrosschainERC20Factory_ZeroAddress.selector);
+
+    // Deploy the CrosschainERC20 with Lockbox
+    _factory.deployCrosschainERC20WithLockbox(
+      _name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
+    );
+  }
+
   /// @notice Test that the deployCrosschainERC20WithLockbox function succeeds.
   function test_DeployCrosschainERC20WithLockboxSucceeds(uint256 _minterLimit, uint256 _burnerLimit) public {
     // Bound limits in allowed range

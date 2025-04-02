@@ -88,6 +88,8 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
   /// @param _baseToken The address of the base token
   /// @return lockbox_ The address of the new CrosschainERC20Lockbox contract
   function _deployLockbox(address _crosschainERC20, address _baseToken) internal returns (address payable lockbox_) {
+    if (_baseToken == address(0)) revert ICrosschainERC20Factory_ZeroAddress();
+
     bytes32 salt = keccak256(abi.encodePacked(_crosschainERC20, _baseToken, msg.sender));
     bytes memory creation = type(XERC20Lockbox).creationCode;
     bytes memory bytecode = abi.encodePacked(creation, abi.encode(_crosschainERC20, _baseToken, false));

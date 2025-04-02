@@ -7,6 +7,9 @@ interface ICrosschainERC20Factory {
   /// @notice Thrown when minter limits, burner limits, or bridges arrays have mismatched lengths.
   error InvalidLength();
 
+  /// @notice Thrown when the owner is the zero address.
+  error ICrosschainERC20Factory_ZeroAddress();
+
   /**
    * @notice Deploys a new CrosschainERC20 contract and returns the address
    * @param _name The name of the token

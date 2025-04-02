@@ -32,7 +32,6 @@ interface ICrosschainERC20Factory {
    * @notice Deploys a new CrosschainERC20Lockbox and CrosschainERC20
    * @param _name The name of the token
    * @param _symbol The symbol of the token
-   * @param _decimals The decimals of the token
    * @param _minterLimits The minter limits for the token
    * @param _burnerLimits The burner limits for the token
    * @param _bridges The bridges for the token
@@ -44,7 +43,6 @@ interface ICrosschainERC20Factory {
   function deployCrosschainERC20WithLockbox(
     string memory _name,
     string memory _symbol,
-    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,

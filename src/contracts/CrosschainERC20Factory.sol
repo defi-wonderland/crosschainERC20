@@ -81,6 +81,8 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     }
 
     CrosschainERC20(_crosschainERC20).transferOwnership(_owner);
+
+    emit CrosschainERC20Deployed(_crosschainERC20);
   }
 
   /// @notice Deploys a new CrosschainERC20Lockbox contract
@@ -95,6 +97,8 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     _lockbox = payable(CREATE3.deployDeterministic(bytecode, salt));
 
     CrosschainERC20(_crosschainERC20).setLockbox(address(_lockbox));
+
+    emit CrosschainERC20LockboxDeployed(_lockbox);
   }
 
   /// @notice Deploys a new ERC7802Adapter
@@ -107,5 +111,7 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     bytes memory bytecode = abi.encodePacked(creation, abi.encode(_xerc20, _bridge));
 
     _erc7802Adapter = CREATE3.deployDeterministic(bytecode, salt);
+
+    emit ERC7802AdapterDeployed(_erc7802Adapter);
   }
 }

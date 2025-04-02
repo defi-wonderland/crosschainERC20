@@ -4,6 +4,15 @@ pragma solidity ^0.8.23;
 /// @title ICrosschainERC20Factory
 /// @notice This interface is available on the CrosschainERC20Factory contract.
 interface ICrosschainERC20Factory {
+  /// @notice Emitted when a new CrosschainERC20 contract is deployed.
+  event CrosschainERC20Deployed(address indexed _crosschainERC20);
+
+  /// @notice Emitted when a new CrosschainERC20Lockbox contract is deployed.
+  event CrosschainERC20LockboxDeployed(address indexed _crosschainERC20Lockbox);
+
+  /// @notice Emitted when a new ERC7802Adapter contract is deployed.
+  event ERC7802AdapterDeployed(address indexed _erc7802Adapter);
+
   /// @notice Thrown when minter limits, burner limits, or bridges arrays have mismatched lengths.
   error InvalidLength();
 

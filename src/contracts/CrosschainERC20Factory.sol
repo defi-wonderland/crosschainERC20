@@ -5,6 +5,7 @@ pragma solidity 0.8.25;
 import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
+import {ERC20} from 'solady/tokens/ERC20.sol';
 
 // Interfaces
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
@@ -32,15 +33,16 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
   function deployCrosschainERC20WithLockbox(
     string memory _name,
     string memory _symbol,
-    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
     address _baseToken,
     address _owner
-  ) external returns (address _crosschainERC20, address _crosschainERC20Lockbox) {
-    _crosschainERC20 = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
-    _crosschainERC20Lockbox = _deployLockbox(_crosschainERC20, _baseToken);
+  ) external returns (address crosschainERC20_, address crosschainERC20Lockbox_) {
+    uint8 _decimals = ERC20(_baseToken).decimals();
+
+    crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
+    crosschainERC20Lockbox_ = _deployLockbox(crosschainERC20_, _baseToken);
   }
 
   /// @inheritdoc ICrosschainERC20Factory

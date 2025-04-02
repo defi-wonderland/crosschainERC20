@@ -17,7 +17,6 @@ contract DeployCrosschainERC20WithLockbox is Script {
   struct DeploymentParams {
     string _name;
     string _symbol;
-    uint8 _decimals;
     uint256[] _minterLimits;
     uint256[] _burnerLimits;
     address[] _bridges;
@@ -49,7 +48,6 @@ contract DeployCrosschainERC20WithLockbox is Script {
     _deploymentParams[1] = DeploymentParams({
       _name: 'Test',
       _symbol: 'TST',
-      _decimals: 18,
       _minterLimits: minterLimits,
       _burnerLimits: burnerLimits,
       _bridges: bridges,
@@ -65,7 +63,6 @@ contract DeployCrosschainERC20WithLockbox is Script {
     (address _crosschainERC20Address, address _lockboxAddress) = _factory.deployCrosschainERC20WithLockbox(
       _params._name,
       _params._symbol,
-      _params._decimals,
       _params._minterLimits,
       _params._burnerLimits,
       _params._bridges,

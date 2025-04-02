@@ -183,9 +183,12 @@ contract UnitCrosschainERC20Factory is Test {
     vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
     vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
 
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
     // Deploy the CrosschainERC20 with Lockbox
     (_crosschainERC20, _crosschainERC20Lockbox) = _factory.deployCrosschainERC20WithLockbox(
-      _name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
+      _name, _symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
     );
 
     // Assert the CrosschainERC20 is deployed
@@ -221,9 +224,12 @@ contract UnitCrosschainERC20Factory is Test {
     vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
     vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
 
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
     // Deploy the CrosschainERC20 with Lockbox
     (_crosschainERC20, _crosschainERC20Lockbox) = _factory.deployCrosschainERC20WithLockbox(
-      _name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
+      _name, _symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
     );
 
     // Assert the CrosschainERC20Lockbox is set

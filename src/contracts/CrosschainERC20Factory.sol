@@ -5,6 +5,7 @@ pragma solidity 0.8.25;
 import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
+import {ERC20} from 'solady/tokens/ERC20.sol';
 
 // Interfaces
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
@@ -24,28 +25,29 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
     address _owner
-  ) external returns (address crosschainERC20_) {
-    crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
+  ) external returns (address _crosschainERC20) {
+    _crosschainERC20 = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
   }
 
   /// @inheritdoc ICrosschainERC20Factory
   function deployCrosschainERC20WithLockbox(
     string memory _name,
     string memory _symbol,
-    uint8 _decimals,
     uint256[] memory _minterLimits,
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
     address _baseToken,
     address _owner
   ) external returns (address crosschainERC20_, address crosschainERC20Lockbox_) {
+    uint8 _decimals = ERC20(_baseToken).decimals();
+
     crosschainERC20_ = _deployCrosschainERC20(_name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _owner);
     crosschainERC20Lockbox_ = _deployLockbox(crosschainERC20_, _baseToken);
   }
 
   /// @inheritdoc ICrosschainERC20Factory
-  function deployERC7802Adapter(address _xerc20, address _bridge) external returns (address erc7802Adapter_) {
-    erc7802Adapter_ = _deployERC7802Adapter(_xerc20, _bridge);
+  function deployERC7802Adapter(address _xerc20, address _bridge) external returns (address _erc7802Adapter) {
+    _erc7802Adapter = _deployERC7802Adapter(_xerc20, _bridge);
   }
 
   /// @notice Deploys a new CrosschainERC20 contract and returns the address
@@ -56,7 +58,7 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
   /// @param _burnerLimits The burner limits for the token
   /// @param _bridges The bridges for the token
   /// @param _owner The owner of the new token
-  /// @return crosschainERC20_ The address of the new CrosschainERC20 contract
+  /// @return _crosschainERC20 The address of the new CrosschainERC20 contract
   function _deployCrosschainERC20(
     string memory _name,
     string memory _symbol,
@@ -65,47 +67,53 @@ contract CrosschainERC20Factory is ICrosschainERC20Factory {
     uint256[] memory _burnerLimits,
     address[] memory _bridges,
     address _owner
-  ) internal returns (address crosschainERC20_) {
+  ) internal returns (address _crosschainERC20) {
     uint256 _bridgesLength = _bridges.length;
 
     if (_minterLimits.length != _bridgesLength || _burnerLimits.length != _bridgesLength) revert InvalidLength();
 
-    bytes32 salt = keccak256(abi.encodePacked(_name, _symbol, _decimals, msg.sender));
+    bytes32 salt = keccak256(abi.encode(_name, _symbol, _decimals, msg.sender));
     bytes memory creation = type(CrosschainERC20).creationCode;
     bytes memory bytecode = abi.encodePacked(creation, abi.encode(_name, _symbol, _decimals, address(this)));
 
-    crosschainERC20_ = CREATE3.deployDeterministic(bytecode, salt);
+    _crosschainERC20 = CREATE3.deployDeterministic(bytecode, salt);
 
     for (uint256 _i; _i < _bridgesLength; ++_i) {
-      CrosschainERC20(crosschainERC20_).setLimits(_bridges[_i], _minterLimits[_i], _burnerLimits[_i]);
+      CrosschainERC20(_crosschainERC20).setLimits(_bridges[_i], _minterLimits[_i], _burnerLimits[_i]);
     }
 
-    CrosschainERC20(crosschainERC20_).transferOwnership(_owner);
+    CrosschainERC20(_crosschainERC20).transferOwnership(_owner);
+
+    emit CrosschainERC20Deployed(_crosschainERC20);
   }
 
   /// @notice Deploys a new CrosschainERC20Lockbox contract
   /// @param _crosschainERC20 The address of the CrosschainERC20 contract
   /// @param _baseToken The address of the base token
-  /// @return lockbox_ The address of the new CrosschainERC20Lockbox contract
-  function _deployLockbox(address _crosschainERC20, address _baseToken) internal returns (address payable lockbox_) {
-    bytes32 salt = keccak256(abi.encodePacked(_crosschainERC20, _baseToken, msg.sender));
+  /// @return _lockbox The address of the new CrosschainERC20Lockbox contract
+  function _deployLockbox(address _crosschainERC20, address _baseToken) internal returns (address payable _lockbox) {
+    bytes32 salt = keccak256(abi.encode(_crosschainERC20, _baseToken, msg.sender));
     bytes memory creation = type(XERC20Lockbox).creationCode;
     bytes memory bytecode = abi.encodePacked(creation, abi.encode(_crosschainERC20, _baseToken, false));
 
-    lockbox_ = payable(CREATE3.deployDeterministic(bytecode, salt));
+    _lockbox = payable(CREATE3.deployDeterministic(bytecode, salt));
 
-    CrosschainERC20(_crosschainERC20).setLockbox(address(lockbox_));
+    CrosschainERC20(_crosschainERC20).setLockbox(address(_lockbox));
+
+    emit CrosschainERC20LockboxDeployed(_lockbox);
   }
 
   /// @notice Deploys a new ERC7802Adapter
   /// @param _xerc20 The address of the xERC20 contract
   /// @param _bridge The address of the bridge
-  /// @return erc7802Adapter_ The address of the new ERC7802Adapter contract
-  function _deployERC7802Adapter(address _xerc20, address _bridge) internal returns (address erc7802Adapter_) {
-    bytes32 salt = keccak256(abi.encodePacked(_xerc20, _bridge, msg.sender));
+  /// @return _erc7802Adapter The address of the new ERC7802Adapter contract
+  function _deployERC7802Adapter(address _xerc20, address _bridge) internal returns (address _erc7802Adapter) {
+    bytes32 salt = keccak256(abi.encode(_xerc20, _bridge, msg.sender));
     bytes memory creation = type(ERC7802Adapter).creationCode;
     bytes memory bytecode = abi.encodePacked(creation, abi.encode(_xerc20, _bridge));
 
-    erc7802Adapter_ = CREATE3.deployDeterministic(bytecode, salt);
+    _erc7802Adapter = CREATE3.deployDeterministic(bytecode, salt);
+
+    emit ERC7802AdapterDeployed(_erc7802Adapter);
   }
 }

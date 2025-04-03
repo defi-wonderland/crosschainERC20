@@ -10,6 +10,8 @@ import {XERC20Lockbox} from '@xERC20/contracts/XERC20Lockbox.sol';
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 import {CrosschainERC20Factory} from 'contracts/CrosschainERC20Factory.sol';
 import {ERC7802Adapter} from 'contracts/ERC7802Adapter.sol';
+import {ERC20} from 'solady/tokens/ERC20.sol';
+import {CREATE3} from 'solady/utils/CREATE3.sol';
 
 // Interfaces
 import {ICrosschainERC20Factory} from 'interfaces/ICrosschainERC20Factory.sol';
@@ -76,6 +78,26 @@ contract UnitCrosschainERC20Factory is Test {
 
     // Deploy the CrosschainERC20
     vm.expectRevert(ICrosschainERC20Factory.InvalidLength.selector);
+    _factory.deployCrosschainERC20(_name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _owner);
+  }
+
+  /// @notice Test that the deployCrosschainERC20 function succeeds.
+  /// @param _minterLimit The minter limit.
+  /// @param _burnerLimit The burner limit.
+  function test_DeployCrosschainERC20RevertsWhenAddressIsTaken(uint256 _minterLimit, uint256 _burnerLimit) public {
+    // Bound limits in allowed range
+    _minterLimit = bound(_minterLimit, 1, type(uint256).max >> 1);
+    _burnerLimit = bound(_burnerLimit, 1, type(uint256).max >> 1);
+
+    // Get the bridges with limits
+    (address[] memory _bridges, uint256[] memory _minterLimits, uint256[] memory _burnerLimits) =
+      _getBridgesWithLimits(_minterLimit, _burnerLimit);
+
+    // Deploy the CrosschainERC20
+    _factory.deployCrosschainERC20(_name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _owner);
+
+    // Deploy the CrosschainERC20 again
+    vm.expectRevert(CREATE3.DeploymentFailed.selector);
     _factory.deployCrosschainERC20(_name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _owner);
   }
 
@@ -158,9 +180,15 @@ contract UnitCrosschainERC20Factory is Test {
     address _crosschainERC20Lockbox;
     address _baseToken = address(makeAddr('ERC20'));
 
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
     // Deploy the CrosschainERC20 with Lockbox
     (_crosschainERC20, _crosschainERC20Lockbox) = _factory.deployCrosschainERC20WithLockbox(
-      _name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
+      _name, _symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
     );
 
     // Assert the CrosschainERC20 is deployed
@@ -193,9 +221,15 @@ contract UnitCrosschainERC20Factory is Test {
     address _crosschainERC20Lockbox;
     address _baseToken = address(makeAddr('ERC20'));
 
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
+    vm.mockCall(_baseToken, abi.encodeCall(ERC20.decimals, ()), abi.encode(_DECIMALS));
+    vm.expectCall(_baseToken, abi.encodeCall(ERC20.decimals, ()));
+
     // Deploy the CrosschainERC20 with Lockbox
     (_crosschainERC20, _crosschainERC20Lockbox) = _factory.deployCrosschainERC20WithLockbox(
-      _name, _symbol, _DECIMALS, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
+      _name, _symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, _owner
     );
 
     // Assert the CrosschainERC20Lockbox is set

@@ -31,7 +31,7 @@ contract Handler is Setup {
 
     vm.prank(_caller);
     try factory.deployCrosschainERC20WithLockbox(
-      _name, _symbol, _decimals, _minterLimits, _burnerLimits, _bridges, _baseToken, _OWNER
+      _name, _symbol, _minterLimits, _burnerLimits, _bridges, _baseToken, _OWNER
     ) {
       ghost_paramsUsed[_name][_symbol][_decimals] = true;
       ghost_saltUsed[_salt] = msg.sender;

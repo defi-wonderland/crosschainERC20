@@ -41,7 +41,7 @@ contract Setup is PropertiesAsserts, GhostVariables {
     _bridges[0] = _BRIDGE;
 
     (address _crosschainERC20, address _lockbox) = factory.deployCrosschainERC20WithLockbox(
-      'Test', 'TEST', 18, _minterLimits, _burnerLimits, _bridges, address(xerc20), _OWNER
+      'Test', 'TEST', _minterLimits, _burnerLimits, _bridges, address(xerc20), _OWNER
     );
 
     crosschainERC20 = ICrosschainERC20(_crosschainERC20);

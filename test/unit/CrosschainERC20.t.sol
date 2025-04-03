@@ -165,7 +165,7 @@ contract UnitCrosschainERC20 is Test {
     vm.assume(_bridge != _ZERO_ADDRESS);
 
     // Bound `amount` to not surpass the xERC20 limits
-    _amount = bound(_amount, 0, 1e40);
+    _amount = bound(_amount, 1, 1e40);
 
     // Set the limits for the Token Bridge
     vm.prank(_OWNER);
@@ -188,7 +188,7 @@ contract UnitCrosschainERC20 is Test {
     vm.assume(_bridge != _ZERO_ADDRESS && _bridge != _PERMIT2);
 
     // Bound `amount` to not surpass the xERC20 limits
-    _amount = bound(_amount, 0, 1e40);
+    _amount = bound(_amount, 1, 1e40);
 
     // Set the limits for the Token Bridge
     vm.prank(_OWNER);

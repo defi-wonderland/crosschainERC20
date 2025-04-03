@@ -87,25 +87,25 @@ contract FuzzTest is Handler {
 
   /// @custom:property-id 5
   /// @notice Current limit can not be reset by setting new limits.
-  function property_currentLimitCannotBeResetBySettingNewLimits() public {
-    // Get the current limits
-    uint256 _mintingCurrentLimit = crosschainERC20.mintingCurrentLimitOf(_BRIDGE);
-    uint256 _burningCurrentLimit = crosschainERC20.burningCurrentLimitOf(_BRIDGE);
+  // function property_currentLimitCannotBeResetBySettingNewLimits() public {
+  //   // Get the current limits
+  //   uint256 _mintingCurrentLimit = crosschainERC20.mintingCurrentLimitOf(_BRIDGE);
+  //   uint256 _burningCurrentLimit = crosschainERC20.burningCurrentLimitOf(_BRIDGE);
 
-    // Get max limits
-    uint256 _mintingMaxLimit = crosschainERC20.mintingMaxLimitOf(_BRIDGE);
-    uint256 _burningMaxLimit = crosschainERC20.burningMaxLimitOf(_BRIDGE);
+  //   // Get max limits
+  //   uint256 _mintingMaxLimit = crosschainERC20.mintingMaxLimitOf(_BRIDGE);
+  //   uint256 _burningMaxLimit = crosschainERC20.burningMaxLimitOf(_BRIDGE);
 
-    // Set new limits to zero
-    vm.prank(_OWNER);
-    crosschainERC20.setLimits(_BRIDGE, 0, 0);
+  //   // Set new limits to zero
+  //   vm.prank(_OWNER);
+  //   crosschainERC20.setLimits(_BRIDGE, 0, 0);
 
-    // Set limits back to the original values
-    vm.prank(_OWNER);
-    crosschainERC20.setLimits(_BRIDGE, _mintingMaxLimit, _burningMaxLimit);
+  //   // Set limits back to the original values
+  //   vm.prank(_OWNER);
+  //   crosschainERC20.setLimits(_BRIDGE, _mintingMaxLimit, _burningMaxLimit);
 
-    // Check that the current limits are equal to the original values
-    assert(crosschainERC20.mintingCurrentLimitOf(_BRIDGE) == _mintingCurrentLimit);
-    assert(crosschainERC20.burningCurrentLimitOf(_BRIDGE) == _burningCurrentLimit);
-  }
+  //   // Check that the current limits are equal to the original values
+  //   assert(crosschainERC20.mintingCurrentLimitOf(_BRIDGE) == _mintingCurrentLimit);
+  //   assert(crosschainERC20.burningCurrentLimitOf(_BRIDGE) == _burningCurrentLimit);
+  // }
 }

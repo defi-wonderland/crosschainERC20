@@ -2,7 +2,6 @@
 
 This testing campaign aims to verify the correctness and security of the CrosschainERC20 system through invariant testing. The campaign focuses on three main components:
 
-## Milestones
 
 1. CrosschainERC20 Token Contract
 

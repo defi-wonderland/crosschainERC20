@@ -35,5 +35,5 @@ This testing campaign aims to verify the correctness and security of the Crossch
 | 2   | Factory         | Different msg.sender's MUST NOT be able to deploy a CrosschainERC20 on the same address on different chains                         | [X]    |
 | 3   | Factory         | A CrosschainERC20 MUST NOT be able to be deployed on the same address on different chains using different params                         | [X]    |
 | 3   | CrosschainERC20 | The total supply of the CrosschainERC20 equals the ERC20 deposited in the lockbox +/- bridged CrosschainERC20 tokens. | [X]    |
-| 4   | CrosschainERC20 | The bridge limits cannot be set to a value greater than the max allowed.                                                                                              | [X]    |
+| 4   | CrosschainERC20 | The bridge limits MUST NOT be set to a value greater than the max allowed.                                                                                              | [X]    |
 | 5   | CrosschainERC20 | Current limit can not be reset by setting new limits.                                                                                                                 | [X]    |

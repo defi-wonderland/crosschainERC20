@@ -5,9 +5,10 @@ import {Handler} from './Handler.sol';
 import {vm} from './utils/VM.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
 import {CREATE3} from 'solady/utils/CREATE3.sol';
-import {ICrosschainERC20} from 'src/interfaces/ICrosschainERC20.sol';
 
 contract FuzzTest is Handler {
+  uint256 private constant _MAX_LIMIT = type(uint256).max >> 1;
+
   /// @custom:property-id 1
   /// @notice The same msg.sender MUST NOT be able to deploy a CrosschainERC20 on the same address as one that he
   /// already deployed one using different params.
@@ -128,8 +129,7 @@ contract FuzzTest is Handler {
   /// @notice The bridge limits MUST NOT be set to a value greater than the max allowed.
   function property_bridgeLimitsCannotBeGreaterThanMaxAllowed() public view {
     assert(
-      crosschainERC20.mintingMaxLimitOf(_BRIDGE) < type(uint256).max >> 1
-        && crosschainERC20.burningMaxLimitOf(_BRIDGE) < type(uint256).max >> 1
+      crosschainERC20.mintingMaxLimitOf(_BRIDGE) < _MAX_LIMIT && crosschainERC20.burningMaxLimitOf(_BRIDGE) < _MAX_LIMIT
     );
   }
 }

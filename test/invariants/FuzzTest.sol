@@ -83,8 +83,7 @@ contract FuzzTest is Handler {
   function property_cantReuseSameParamsFromDifferentChain(
     string memory _name,
     string memory _symbol,
-    uint8 _decimals,
-    address _caller
+    uint8 _decimals
   ) public {
     // solhint-disable-next-line custom-errors
     require(bytes(_name).length < 100, 'Name too long');
@@ -109,7 +108,7 @@ contract FuzzTest is Handler {
       // If the deployment fails, the params must have been used
       // And the salt must have been used by the caller before
       assert(
-        ghost_paramsUsed[_name][_symbol][_decimals] && ghost_saltUsed[_salt] == _caller
+        ghost_paramsUsed[_name][_symbol][_decimals] && ghost_saltUsed[_salt] == address(this)
           && ghost_addressUsed[_predictedAddress]
       );
     }
@@ -133,28 +132,4 @@ contract FuzzTest is Handler {
         && crosschainERC20.burningMaxLimitOf(_BRIDGE) < type(uint256).max >> 1
     );
   }
-
-  /// @custom:property-id 5
-  /// @notice Current limit can not be reset by setting new limits.
-  // function property_currentLimitCannotBeResetBySettingNewLimits() public {
-  //   // Get the current limits
-  //   uint256 _mintingCurrentLimit = crosschainERC20.mintingCurrentLimitOf(_BRIDGE);
-  //   uint256 _burningCurrentLimit = crosschainERC20.burningCurrentLimitOf(_BRIDGE);
-
-  //   // Get max limits
-  //   uint256 _mintingMaxLimit = crosschainERC20.mintingMaxLimitOf(_BRIDGE);
-  //   uint256 _burningMaxLimit = crosschainERC20.burningMaxLimitOf(_BRIDGE);
-
-  //   // Set new limits to zero
-  //   vm.prank(_OWNER);
-  //   crosschainERC20.setLimits(_BRIDGE, 0, 0);
-
-  //   // Set limits back to the original values
-  //   vm.prank(_OWNER);
-  //   crosschainERC20.setLimits(_BRIDGE, _mintingMaxLimit, _burningMaxLimit);
-
-  //   // Check that the current limits are equal to the original values
-  //   assert(crosschainERC20.mintingCurrentLimitOf(_BRIDGE) == _mintingCurrentLimit);
-  //   assert(crosschainERC20.burningCurrentLimitOf(_BRIDGE) == _burningCurrentLimit);
-  // }
 }

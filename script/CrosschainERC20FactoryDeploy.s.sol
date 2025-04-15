@@ -15,7 +15,7 @@ import {CREATE3} from 'solady/utils/CREATE3.sol';
 contract DeployCrosschainERC20Factory is Script {
   function run() public returns (CrosschainERC20Factory _factory) {
     vm.startBroadcast();
-    bytes32 salt = keccak256(abi.encodePacked('wonderland')); // Deploys at `0xe4c221582E95A0d84b29d294AF8235Fc74E1CF60`
+    bytes32 salt = keccak256(abi.encodePacked('superseed')); // Deploys at `0xc8BFbAeEc5699e1E7a9a47386310E1a6A1133055`
     _factory = CrosschainERC20Factory(CREATE3.deployDeterministic(type(CrosschainERC20Factory).creationCode, salt));
     vm.stopBroadcast();
   }

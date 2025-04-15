@@ -35,8 +35,8 @@ contract DeployCrosschainERC20 is Script {
     address[] memory bridges = new address[](2);
 
     _deploymentParams[8453] = DeploymentParams({
-      _name: 'xSSTestToken2',
-      _symbol: 'xSST2',
+      _name: 'Superseed',
+      _symbol: 'SUPR',
       _decimals: 18,
       _minterLimits: minterLimits,
       _burnerLimits: burnerLimits,

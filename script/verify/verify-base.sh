@@ -5,6 +5,8 @@ forge fmt && forge clean && forge build && source .env
 
 # Verify
 
+## CrosschainERC20
+### Basescan
 forge verify-contract \
 0xA317EEAC84FA88Da2064c222D3A13eA9087514ba \
 src/contracts/CrosschainERC20.sol:CrosschainERC20 \
@@ -12,6 +14,7 @@ src/contracts/CrosschainERC20.sol:CrosschainERC20 \
 --etherscan-api-key $API_KEY_BASESCAN \
 --verifier-url https://api.basescan.org/api/
 
+### Blockscout
 forge verify-contract \
 0xA317EEAC84FA88Da2064c222D3A13eA9087514ba \
 src/contracts/CrosschainERC20.sol:CrosschainERC20 \

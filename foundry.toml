@@ -28,9 +28,19 @@ src = 'src/interfaces/'
 runs = 1000
 
 [rpc_endpoints]
-mainnet = "${MAINNET_RPC}"
-sepolia = "${SEPOLIA_RPC}"
+arbitrum = "https://arbitrum-one-rpc.publicnode.com"
+avalanche = "https://avalanche-c-chain-rpc.publicnode.com"
+base = "https://mainnet.base.org"
+bnb_smart_chain = "https://bsc-dataseed.binance.org"
+gnosis_chain = "https://rpc.gnosischain.com"
+localhost = "http://localhost:8545"
+mainnet = "https://eth-mainnet.g.alchemy.com/v2/${API_KEY_ALCHEMY}"
+optimism = "https://optimism-rpc.publicnode.com"
+polygon = "https://polygon-bor-rpc.publicnode.com"
+sepolia = "https://ethereum-sepolia-rpc.publicnode.com"
+superseed = "https://rpc-superseed-mainnet-0.t.conduit.xyz/${API_KEY_CONDUIT}"
+superseed_sepolia = "https://rpc-sepolia-superseed-826s35710w.t.conduit.xyz/${API_KEY_CONDUIT}"
 
 [etherscan]
-mainnet = { key = "${ETHERSCAN_API_KEY}" }
-sepolia = { key = "${ETHERSCAN_API_KEY}" }
+mainnet = { key = "${API_KEY_ETHERSCAN}" }
+sepolia = { key = "${API_KEY_ETHERSCAN}" }

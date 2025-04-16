@@ -33,9 +33,9 @@ contract DeployCrosschainERC20WithLockbox is Script {
   function setUp() public {
     _factory = CrosschainERC20Factory(0xc8BFbAeEc5699e1E7a9a47386310E1a6A1133055); // Determined because of CREATE3 deployment
 
-    uint256[] memory minterLimits = new uint256[](2);
-    uint256[] memory burnerLimits = new uint256[](2);
-    address[] memory bridges = new address[](2);
+    uint256[] memory minterLimits = new uint256[](0);
+    uint256[] memory burnerLimits = new uint256[](0);
+    address[] memory bridges = new address[](0);
 
     _deploymentParams[5330] = DeploymentParams({
       _name: 'Superseed Crosschain Token',
@@ -43,8 +43,8 @@ contract DeployCrosschainERC20WithLockbox is Script {
       _minterLimits: minterLimits,
       _burnerLimits: burnerLimits,
       _bridges: bridges,
-      _baseToken: 0x896bA3c35F105008160202f8A1A824a3dfcED375, // SST2
-      _owner: 0x6418A646Ed5D55D41d9aD8d0B662bEb8db84e995
+      _baseToken: 0x6EA1fFcbD7F5D210dB07D9E773862B0512fA219B, // SUPR
+      _owner: 0xeF0834C8D531DA628E5f3985AdbaC44aaAfF4148
     });
   }
 

@@ -10,8 +10,8 @@ forge fmt && forge clean && forge build && source .env
 # 2. Simulation
 # =================
 
-forge script script/CrosschainERC20FactoryDeploy.s.sol --private-key $PRIVATE_KEY_PROD --rpc-url base -vvvv
-forge script script/CrosschainERC20Deploy.s.sol --private-key $PRIVATE_KEY_PROD --rpc-url base -vvvv
+forge script script/CrosschainERC20FactoryDeploy.s.sol --private-key $PRIVATE_KEY_PROD --rpc-url mainnet -vvvv
+forge script script/CrosschainERC20Deploy.s.sol --private-key $PRIVATE_KEY_PROD --rpc-url mainnet -vvvv
 
 # =================
 # 3. Execute
@@ -19,14 +19,14 @@ forge script script/CrosschainERC20Deploy.s.sol --private-key $PRIVATE_KEY_PROD 
 
 forge script script/CrosschainERC20FactoryDeploy.s.sol \
 --private-key $PRIVATE_KEY_PROD \
---rpc-url base \
+--rpc-url mainnet \
 --slow \
 --broadcast \
 -vvvv
 
 forge script script/CrosschainERC20Deploy.s.sol \
 --private-key $PRIVATE_KEY_PROD \
---rpc-url base \
+--rpc-url mainnet \
 --slow \
 --broadcast \
 -vvvv

@@ -30,10 +30,33 @@ contract DeployCrosschainERC20 is Script {
   function setUp() public {
     _factory = CrosschainERC20Factory(0xc8BFbAeEc5699e1E7a9a47386310E1a6A1133055); // Determined because of CREATE3 deployment
 
-    uint256[] memory minterLimits = new uint256[](2);
-    uint256[] memory burnerLimits = new uint256[](2);
-    address[] memory bridges = new address[](2);
+    uint256[] memory minterLimits = new uint256[](0);
+    uint256[] memory burnerLimits = new uint256[](0);
+    address[] memory bridges = new address[](0);
 
+    // Ethereum
+    _deploymentParams[1] = DeploymentParams({
+      _name: 'Superseed',
+      _symbol: 'SUPR',
+      _decimals: 18,
+      _minterLimits: minterLimits,
+      _burnerLimits: burnerLimits,
+      _bridges: bridges,
+      _owner: 0xeF0834C8D531DA628E5f3985AdbaC44aaAfF4148
+    });
+
+    // Optimism
+    _deploymentParams[10] = DeploymentParams({
+      _name: 'Superseed',
+      _symbol: 'SUPR',
+      _decimals: 18,
+      _minterLimits: minterLimits,
+      _burnerLimits: burnerLimits,
+      _bridges: bridges,
+      _owner: 0xeF0834C8D531DA628E5f3985AdbaC44aaAfF4148
+    });
+
+    // Base
     _deploymentParams[8453] = DeploymentParams({
       _name: 'Superseed',
       _symbol: 'SUPR',
@@ -41,7 +64,18 @@ contract DeployCrosschainERC20 is Script {
       _minterLimits: minterLimits,
       _burnerLimits: burnerLimits,
       _bridges: bridges,
-      _owner: 0x6418A646Ed5D55D41d9aD8d0B662bEb8db84e995
+      _owner: 0xeF0834C8D531DA628E5f3985AdbaC44aaAfF4148
+    });
+
+    // Ink
+    _deploymentParams[57_073] = DeploymentParams({
+      _name: 'Superseed',
+      _symbol: 'SUPR',
+      _decimals: 18,
+      _minterLimits: minterLimits,
+      _burnerLimits: burnerLimits,
+      _bridges: bridges,
+      _owner: 0xeF0834C8D531DA628E5f3985AdbaC44aaAfF4148
     });
   }
 

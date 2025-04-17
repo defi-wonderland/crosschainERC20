@@ -1,0 +1,61 @@
+[
+  {
+    "returns": {
+      "_lockbox": {
+        "internal_type": "contract IXERC20Lockbox",
+        "value": "0xEe64bC3f4A58D638D0845b24e2f51534d01b6549"
+      },
+      "_crosschainERC20": {
+        "internal_type": "contract CrosschainERC20",
+        "value": "0xFED85A05C1eeDEae2280777334D34b890b6381e2"
+      }
+    },
+    "timestamp": 1744791037,
+    "chain": 5330,
+    "commit": "0289dbf"
+  },
+  {
+    "returns": {
+      "_crosschainERC20": {
+        "internal_type": "contract CrosschainERC20",
+        "value": "0x17906b1Cd88aA8EfaEfC5e82891B52a22219BD45"
+      }
+    },
+    "timestamp": 1744790833,
+    "chain": 1,
+    "commit": "0289dbf"
+  },
+  {
+    "returns": {
+      "_crosschainERC20": {
+        "internal_type": "contract CrosschainERC20",
+        "value": "0x17906b1Cd88aA8EfaEfC5e82891B52a22219BD45"
+      }
+    },
+    "timestamp": 1744790806,
+    "chain": 10,
+    "commit": "0289dbf"
+  },
+  {
+    "returns": {
+      "_crosschainERC20": {
+        "internal_type": "contract CrosschainERC20",
+        "value": "0x17906b1Cd88aA8EfaEfC5e82891B52a22219BD45"
+      }
+    },
+    "timestamp": 1744790717,
+    "chain": 8453,
+    "commit": "0289dbf"
+  },
+  {
+    "returns": {
+      "_crosschainERC20": {
+        "internal_type": "contract CrosschainERC20",
+        "value": "0x17906b1Cd88aA8EfaEfC5e82891B52a22219BD45"
+      }
+    },
+    "timestamp": 1744790536,
+    "chain": 57073,
+    "commit": "0289dbf"
+  }
+]

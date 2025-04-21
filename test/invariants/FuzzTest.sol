@@ -43,8 +43,7 @@ contract FuzzTest is Handler {
   }
 
   /// @custom:property-id 2
-  /// @notice Different msg.sender's MUST NOT be able to deploy a CrosschainERC20 on the same address on different
-  /// chains using different params.
+  /// @notice Different msg.sender's MUST NOT be able to deploy a CrosschainERC20 on the same address on different chains
   function property_cantReuseSameParamsFromDifferentCaller(
     string memory _name,
     string memory _symbol,

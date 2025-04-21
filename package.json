@@ -22,6 +22,7 @@
     "prepare": "husky",
     "test": "forge test -vvv",
     "test:integration": "forge test --match-contract Integration -vvv",
+    "test:invariants": "medusa fuzz",
     "test:unit": "forge test --match-contract Unit -vvv",
     "test:unit:deep": "FOUNDRY_FUZZ_RUNS=5000 yarn test:unit"
   },

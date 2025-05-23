@@ -175,6 +175,9 @@ contract UnitCrosschainERC20 is Test {
     // Ensure `_tokenOwner` is not the zero address
     vm.assume(_tokenOwner != _ZERO_ADDRESS);
 
+    // Ensure `_tokenOwner` is not the token itself
+    vm.assume(_tokenOwner != address(crosschainERC20));
+
     // Ensure `_tokenBridge` and `_tokenOwner` are not the same address
     vm.assume(_tokenBridge != _tokenOwner);
 

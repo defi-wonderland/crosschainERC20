@@ -50,4 +50,21 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
     return _interfaceId == type(IERC7802).interfaceId || _interfaceId == type(IERC20).interfaceId
       || _interfaceId == type(IERC165).interfaceId || _interfaceId == type(IXERC20).interfaceId;
   }
+
+  /// @dev Hook that is called before any transfer of tokens.
+  /// This includes minting and burning.
+  /// @dev Prevents tokens being minted to the zero address or the token contract itself.
+  /// @dev Current xERC20 version used doesn't override this hook, in
+  /// case it does in the future, it should be considered to avoid
+  /// unexpected behaviour.
+  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
+    // If minting, check if the receiver is valid
+    if (from == address(0)) {
+      if (to == address(0) || to == address(this)) {
+        revert CrosschainERC20__InvalidReceiver(to);
+      }
+    }
+
+    super._beforeTokenTransfer(from, to, amount);
+  }
 }

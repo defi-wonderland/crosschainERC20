@@ -3,7 +3,6 @@ pragma solidity 0.8.25;
 
 // Contracts
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
-import {ERC20} from 'solady/tokens/ERC20.sol';
 
 // Interfaces
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
@@ -52,7 +51,12 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
       || _interfaceId == type(IERC165).interfaceId || _interfaceId == type(IXERC20).interfaceId;
   }
 
-  /// @inheritdoc ERC20
+  /// @dev Hook that is called before any transfer of tokens.
+  /// This includes minting and burning.
+  /// @dev Prevents tokens being minted to the zero address or the token contract itself.
+  /// @dev Current xERC20 version used doesn't override this hook, in
+  /// case it does in the future, it should be considered to avoid
+  /// unexpected behaviour.
   function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
     // If minting, check if the receiver is valid
     if (from == address(0)) {

@@ -2,11 +2,11 @@
 pragma solidity 0.8.25;
 
 // Target contracts
-
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
 import {CrosschainERC20} from 'contracts/CrosschainERC20.sol';
 
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
+import {ICrosschainERC20} from 'interfaces/ICrosschainERC20.sol';
 import {IERC165, IERC7802} from 'interfaces/external/IERC7802.sol';
 import {ERC20} from 'solady/tokens/ERC20.sol';
 
@@ -112,6 +112,58 @@ contract UnitCrosschainERC20 is Test {
     assertEq(crosschainERC20.balanceOf(_tokenOwner), 0);
   }
 
+  /// @notice Tests the `crosschainMint` function reverts when the receiver is the zero address or the token contract itself.
+  function test_CrosschainMintRevertWhenInvalidReceiver(uint256 _amount) public {
+    // Bound `amount` to not surpass the xERC20 limits
+    _amount = bound(_amount, 1, 1e40);
+
+    // Set the limits for the Token Bridge
+    vm.prank(_OWNER);
+    crosschainERC20.setLimits(_OWNER, _amount, 0);
+
+    // Start prank
+    vm.startPrank(_OWNER);
+
+    // Expect the `crosschainMint` function to revert when the receiver is the zero address
+    vm.expectRevert(abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, _ZERO_ADDRESS));
+    crosschainERC20.crosschainMint(_ZERO_ADDRESS, _amount);
+
+    // Expect the `crosschainMint` function to revert when the receiver is the token contract itself
+    vm.expectRevert(
+      abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, address(crosschainERC20))
+    );
+    crosschainERC20.crosschainMint(address(crosschainERC20), _amount);
+
+    // Stop prank
+    vm.stopPrank();
+  }
+
+  /// @notice Tests the `mint` function reverts when the receiver is the zero address or the token contract itself.
+  function test_MintRevertWhenInvalidReceiver(uint256 _amount) public {
+    // Bound `amount` to not surpass the xERC20 limits
+    _amount = bound(_amount, 1, 1e40);
+
+    // Set the limits for the Token Bridge
+    vm.prank(_OWNER);
+    crosschainERC20.setLimits(_OWNER, _amount, 0);
+
+    // Start prank
+    vm.startPrank(_OWNER);
+
+    // Expect the `mint` function to revert when the receiver is the zero address
+    vm.expectRevert(abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, _ZERO_ADDRESS));
+    crosschainERC20.mint(_ZERO_ADDRESS, _amount);
+
+    // Expect the `mint` function to revert when the receiver is the token contract itself
+    vm.expectRevert(
+      abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, address(crosschainERC20))
+    );
+    crosschainERC20.mint(address(crosschainERC20), _amount);
+
+    // Stop prank
+    vm.stopPrank();
+  }
+
   /// @notice Tests the `burn` function works by expecting the allowance to be reduced.
   function test_BurnWhenApproved(uint256 _amount, address _tokenBridge, address _tokenOwner) public {
     // Bound `amount` to not surpass the xERC20 limits
@@ -161,6 +213,9 @@ contract UnitCrosschainERC20 is Test {
     // Ensure `_to` is not the zero address
     vm.assume(_to != _ZERO_ADDRESS);
 
+    // Ensure `_to` is not the token contract itself
+    vm.assume(_to != address(crosschainERC20));
+
     // Ensure `_bridge` is not the zero address
     vm.assume(_bridge != _ZERO_ADDRESS);
 
@@ -183,6 +238,9 @@ contract UnitCrosschainERC20 is Test {
   function test_CrosschainBurnWhenApproved(address _from, uint256 _amount, address _bridge) public {
     // Ensure `_from` is not the zero address
     vm.assume(_from != _ZERO_ADDRESS);
+
+    // Ensure `_from` is not the token contract itself
+    vm.assume(_from != address(crosschainERC20));
 
     // Ensure `_bridge` is not the zero address
     vm.assume(_bridge != _ZERO_ADDRESS && _bridge != _PERMIT2);

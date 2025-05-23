@@ -3,6 +3,7 @@ pragma solidity 0.8.25;
 
 // Contracts
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
+import {ERC20} from 'solady/tokens/ERC20.sol';
 
 // Interfaces
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
@@ -26,6 +27,18 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
     uint8 __decimals,
     address __factory
   ) XERC20(__name, __symbol, __decimals, __factory) {}
+
+  /// @inheritdoc ERC20
+  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
+    // If minting, check if the receiver is valid
+    if (from == address(0)) {
+      if (to == address(0) || to == address(this)) {
+        revert CrosschainERC20__InvalidReceiver(to);
+      }
+    }
+
+    super._beforeTokenTransfer(from, to, amount);
+  }
 
   /// @inheritdoc IERC7802
   function crosschainMint(address _to, uint256 _amount) external {

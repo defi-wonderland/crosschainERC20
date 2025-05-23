@@ -7,4 +7,7 @@ import {IERC7802} from 'interfaces/external/IERC7802.sol';
 
 /// @title ICrosschainERC20
 /// @notice This interface is available on the CrosschainERC20 contract.
-interface ICrosschainERC20 is IXERC20, IERC7802 {}
+interface ICrosschainERC20 is IXERC20, IERC7802 {
+  /// @notice Thrown when trying to mint to the zero address or the token contract itself.
+  error CrosschainERC20__InvalidReceiver(address to);
+}

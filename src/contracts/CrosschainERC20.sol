@@ -28,18 +28,6 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
     address __factory
   ) XERC20(__name, __symbol, __decimals, __factory) {}
 
-  /// @inheritdoc ERC20
-  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
-    // If minting, check if the receiver is valid
-    if (from == address(0)) {
-      if (to == address(0) || to == address(this)) {
-        revert CrosschainERC20__InvalidReceiver(to);
-      }
-    }
-
-    super._beforeTokenTransfer(from, to, amount);
-  }
-
   /// @inheritdoc IERC7802
   function crosschainMint(address _to, uint256 _amount) external {
     _mintWithCaller(msg.sender, _to, _amount);
@@ -62,5 +50,17 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
   function supportsInterface(bytes4 _interfaceId) public view virtual returns (bool) {
     return _interfaceId == type(IERC7802).interfaceId || _interfaceId == type(IERC20).interfaceId
       || _interfaceId == type(IERC165).interfaceId || _interfaceId == type(IXERC20).interfaceId;
+  }
+
+  /// @inheritdoc ERC20
+  function _beforeTokenTransfer(address from, address to, uint256 amount) internal override {
+    // If minting, check if the receiver is valid
+    if (from == address(0)) {
+      if (to == address(0) || to == address(this)) {
+        revert CrosschainERC20__InvalidReceiver(to);
+      }
+    }
+
+    super._beforeTokenTransfer(from, to, amount);
   }
 }

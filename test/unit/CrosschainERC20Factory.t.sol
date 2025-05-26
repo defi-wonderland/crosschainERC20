@@ -198,7 +198,7 @@ contract UnitCrosschainERC20Factory is Test {
     assertGt(_crosschainERC20Lockbox.code.length, 0);
 
     // Assert the Base Token is set
-    assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).ERC20()), _baseToken);
+    assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).BASE_TOKEN()), _baseToken);
 
     // Assert the CrosschainERC20 is set
     assertEq(address(XERC20Lockbox(payable(_crosschainERC20Lockbox)).XERC20()), _crosschainERC20);

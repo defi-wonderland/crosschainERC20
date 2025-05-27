@@ -3,11 +3,11 @@ pragma solidity 0.8.25;
 
 // Contracts
 import {XERC20} from '@xERC20/contracts/XERC20.sol';
+import {ERC20} from 'solady/tokens/ERC20.sol';
 
 // Interfaces
 import {IXERC20} from '@xERC20/interfaces/IXERC20.sol';
 import {IERC20} from 'forge-std/interfaces/IERC20.sol';
-
 import {ICrosschainERC20} from 'interfaces/ICrosschainERC20.sol';
 import {IERC165, IERC7802} from 'interfaces/external/IERC7802.sol';
 
@@ -51,18 +51,23 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
       || _interfaceId == type(IERC165).interfaceId || _interfaceId == type(IXERC20).interfaceId;
   }
 
+  /// @inheritdoc ERC20
   function _transfer(address from, address to, uint256 amount) internal override {
     _receiverCheck(to);
 
     super._transfer(from, to, amount);
   }
 
+  /// @inheritdoc ERC20
   function _mint(address to, uint256 amount) internal override {
     _receiverCheck(to);
 
     super._mint(to, amount);
   }
 
+  /// @dev Checks if the receiver is valid.
+  /// @param to The address to check.
+  /// @dev Prevents tokens being minted to the zero address or the token contract itself.
   function _receiverCheck(address to) internal view {
     if (to == address(0) || to == address(this)) {
       revert CrosschainERC20__InvalidReceiver(to);

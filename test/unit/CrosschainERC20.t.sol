@@ -13,17 +13,30 @@ import {ERC20} from 'solady/tokens/ERC20.sol';
 // Testing utilities
 import {Test} from 'forge-std/Test.sol';
 
+contract CrosschainERC20ForTest is CrosschainERC20 {
+  constructor(
+    string memory _name,
+    string memory _symbol,
+    uint8 _decimals,
+    address _owner
+  ) CrosschainERC20(_name, _symbol, _decimals, _owner) {}
+
+  function internalTransfer(address from, address to, uint256 amount) public {
+    return _transfer(from, to, amount);
+  }
+}
+
 /// @title UnitCrosschainERC20
 /// @notice Contract for testing the CrosschainERC20 contract.
 contract UnitCrosschainERC20 is Test {
-  CrosschainERC20 public crosschainERC20;
+  CrosschainERC20ForTest public crosschainERC20;
   address internal constant _PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
   address internal constant _ZERO_ADDRESS = address(0);
   address internal immutable _OWNER = makeAddr('owner');
 
   /// @notice Sets up the test suite.
   function setUp() public {
-    crosschainERC20 = new CrosschainERC20('Test', 'TST', 18, _OWNER);
+    crosschainERC20 = new CrosschainERC20ForTest('Test', 'TST', 18, _OWNER);
   }
 
   /// @notice Tests the `allowance` function when the spender is Permit2.
@@ -185,6 +198,31 @@ contract UnitCrosschainERC20 is Test {
       abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, address(crosschainERC20))
     );
     crosschainERC20.transferFrom(_OWNER, address(crosschainERC20), _amount);
+
+    // Stop prank
+    vm.stopPrank();
+  }
+
+  function test_InternalTransferFromWhenValidReceiver(uint256 _amount) public {
+    // Bound `amount` to not surpass the xERC20 limits
+    _amount = bound(_amount, 1, 1e40);
+
+    // Set the limits for the Token Bridge
+    vm.prank(_OWNER);
+    crosschainERC20.setLimits(_OWNER, _amount, 0);
+
+    // Start prank
+    vm.startPrank(_OWNER);
+
+    // Expect the `transfer` function to revert when the receiver is the zero address
+    vm.expectRevert(abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, _ZERO_ADDRESS));
+    crosschainERC20.internalTransfer(_OWNER, _ZERO_ADDRESS, _amount);
+
+    // Expect the `transfer` function to revert when the receiver is the token contract itself
+    vm.expectRevert(
+      abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, address(crosschainERC20))
+    );
+    crosschainERC20.internalTransfer(_OWNER, address(crosschainERC20), _amount);
 
     // Stop prank
     vm.stopPrank();

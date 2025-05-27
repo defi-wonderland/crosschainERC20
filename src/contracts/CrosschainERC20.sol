@@ -52,6 +52,20 @@ contract CrosschainERC20 is XERC20, ICrosschainERC20 {
   }
 
   /// @inheritdoc ERC20
+  function transfer(address to, uint256 amount) public virtual override returns (bool) {
+    _receiverCheck(to);
+
+    return super.transfer(to, amount);
+  }
+
+  /// @inheritdoc ERC20
+  function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
+    _receiverCheck(to);
+
+    return super.transferFrom(from, to, amount);
+  }
+
+  /// @inheritdoc ERC20
   function _transfer(address from, address to, uint256 amount) internal override {
     _receiverCheck(to);
 

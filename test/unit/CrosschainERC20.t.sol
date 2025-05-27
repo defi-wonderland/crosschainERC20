@@ -138,6 +138,58 @@ contract UnitCrosschainERC20 is Test {
     vm.stopPrank();
   }
 
+  /// @notice Tests the `transfer` function reverts when the receiver is the zero address or the token contract itself.
+  function test_TransferRevertWhenInvalidReceiver(uint256 _amount) public {
+    // Bound `amount` to not surpass the xERC20 limits
+    _amount = bound(_amount, 1, 1e40);
+
+    // Set the limits for the Token Bridge
+    vm.prank(_OWNER);
+    crosschainERC20.setLimits(_OWNER, _amount, 0);
+
+    // Start prank
+    vm.startPrank(_OWNER);
+
+    // Expect the `transfer` function to revert when the receiver is the zero address
+    vm.expectRevert(abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, _ZERO_ADDRESS));
+    crosschainERC20.transfer(_ZERO_ADDRESS, _amount);
+
+    // Expect the `transfer` function to revert when the receiver is the token contract itself
+    vm.expectRevert(
+      abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, address(crosschainERC20))
+    );
+    crosschainERC20.transfer(address(crosschainERC20), _amount);
+
+    // Stop prank
+    vm.stopPrank();
+  }
+
+  /// @notice Tests the `transferFrom` function reverts when the receiver is the zero address or the token contract itself.
+  function test_TransferFromRevertWhenInvalidReceiver(uint256 _amount) public {
+    // Bound `amount` to not surpass the xERC20 limits
+    _amount = bound(_amount, 1, 1e40);
+
+    // Set the limits for the Token Bridge
+    vm.prank(_OWNER);
+    crosschainERC20.setLimits(_OWNER, _amount, 0);
+
+    // Start prank
+    vm.startPrank(_OWNER);
+
+    // Expect the `transfer` function to revert when the receiver is the zero address
+    vm.expectRevert(abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, _ZERO_ADDRESS));
+    crosschainERC20.transferFrom(_OWNER, _ZERO_ADDRESS, _amount);
+
+    // Expect the `transfer` function to revert when the receiver is the token contract itself
+    vm.expectRevert(
+      abi.encodeWithSelector(ICrosschainERC20.CrosschainERC20__InvalidReceiver.selector, address(crosschainERC20))
+    );
+    crosschainERC20.transferFrom(_OWNER, address(crosschainERC20), _amount);
+
+    // Stop prank
+    vm.stopPrank();
+  }
+
   /// @notice Tests the `mint` function reverts when the receiver is the zero address or the token contract itself.
   function test_MintRevertWhenInvalidReceiver(uint256 _amount) public {
     // Bound `amount` to not surpass the xERC20 limits

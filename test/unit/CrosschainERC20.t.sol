@@ -203,7 +203,7 @@ contract UnitCrosschainERC20 is Test {
     vm.stopPrank();
   }
 
-  function test_InternalTransferFromWhenValidReceiver(uint256 _amount) public {
+  function test_InternalTransferWhenValidReceiver(uint256 _amount) public {
     // Bound `amount` to not surpass the xERC20 limits
     _amount = bound(_amount, 1, 1e40);
 
